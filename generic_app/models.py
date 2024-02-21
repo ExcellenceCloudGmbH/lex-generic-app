@@ -108,7 +108,7 @@ import nest_asyncio
 
 # migrations need to lie on the top level of the repository. Therefore, the
 repo_name = settings.repo_name
-settings.MIGRATION_MODULES[repo_name] = f'migrations'
+settings.MIGRATION_MODULES[repo_name] = f'{repo_name}.migrations'
 
 processAdminSite.register([UserChangeLog, CalculationLog, Log, Streamlit])
 adminSite.register([UserChangeLog, CalculationLog, Log])
