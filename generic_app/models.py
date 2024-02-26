@@ -97,7 +97,7 @@ app_name = Path(__file__).resolve().parent.parts[-1]
 # Find all files in submodels
 base_path = Path(os.getenv("PROJECT_ROOT")).resolve()
 # List all .py files, excluding those in 'venv' directory and starting with '_'
-files = [f for f in base_path.glob("./**/[!_]*.py") if 'venv' not in f.parts]
+files = [f for f in base_path.glob("./**/[!_]*.py") if 'venv' not in f.parts and 'build' not in f.parts]
 from generic_app.submodels.UserChangeLog import UserChangeLog
 from generic_app.submodels.CalculationLog import CalculationLog
 from generic_app.submodels.Log import Log
