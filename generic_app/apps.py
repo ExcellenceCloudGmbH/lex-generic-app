@@ -45,12 +45,6 @@ class GenericAppConfig(AppConfig):
     name = 'generic_app'
 
     def ready(self):
-        if os.environ.get("APP_ALREADY_INITIALIZED"):
-            return
-
-        # Set the flag to prevent re-initialization
-        os.environ["APP_ALREADY_INITIALIZED"] = "1"
-
         generic_app_models = {f"{model.__name__}": model for model in
                               set(list(apps.get_app_config('generic_app').models.values())
                                   + list(apps.get_app_config(repo_name).models.values()))}
