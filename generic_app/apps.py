@@ -11,16 +11,14 @@ import nest_asyncio
 
 
 @shared_task(name="initial_data_upload", max_retries=0)
-def load_data(generic_app_models):
+def load_data(test, generic_app_models):
     """
     Load data asynchronously if conditions are met.
     """
-    from ProcessAdminRestApi.tests.ProcessAdminTestCase import ProcessAdminTestCase
     from generic_app.models import auth_settings
 
     if should_load_data(auth_settings):
         try:
-            test = ProcessAdminTestCase()
             test.test_path = auth_settings.initial_data_load
             print("All models are empty: Starting Initial Data Fill")
             if os.getenv("STORAGE_TYPE", "LEGACY") == "LEGACY":
@@ -47,6 +45,12 @@ class GenericAppConfig(AppConfig):
     name = 'generic_app'
 
     def ready(self):
+        if os.environ.get("APP_ALREADY_INITIALIZED"):
+            return
+
+        # Set the flag to prevent re-initialization
+        os.environ["APP_ALREADY_INITIALIZED"] = "1"
+
         generic_app_models = {f"{model.__name__}": model for model in
                               set(list(apps.get_app_config('generic_app').models.values())
                                   + list(apps.get_app_config(repo_name).models.values()))}
@@ -60,34 +64,32 @@ class GenericAppConfig(AppConfig):
         from ProcessAdminRestApi.tests.ProcessAdminTestCase import ProcessAdminTestCase
         from generic_app.models import auth_settings
 
+        test = ProcessAdminTestCase()
+
         if (not running_in_uvicorn()
                 or os.getenv("CELERY_ACTIVE")
                 or not auth_settings
                 or not auth_settings.initial_data_load):
             return
 
-        if await are_all_models_empty(auth_settings, generic_app_models):
+        if await are_all_models_empty(test, auth_settings, generic_app_models):
             if (os.getenv("DEPLOYMENT_ENVIRONMENT")
                     and os.getenv("ARCHITECTURE") == "MQ/Worker"):
-                load_data.delay(generic_app_models)
+                load_data.delay(test, generic_app_models)
             else:
-                x = threading.Thread(target=load_data, args=(generic_app_models,))
+                x = threading.Thread(target=load_data, args=(test, generic_app_models,))
                 x.start()
         else:
-            test = ProcessAdminTestCase()
             test.test_path = auth_settings.initial_data_load
             non_empty_models = await sync_to_async(test.get_list_of_non_empty_models)(generic_app_models)
             print(f"Loading Initial Data not triggered due to existence of objects of Model: {non_empty_models}")
             print("Not all referenced Models are empty")
 
 
-async def are_all_models_empty(auth_settings, generic_app_models):
+async def are_all_models_empty(test, auth_settings, generic_app_models):
     """
     Check if all models are empty.
     """
-    from ProcessAdminRestApi.tests.ProcessAdminTestCase import ProcessAdminTestCase
-
-    test = ProcessAdminTestCase()
     test.test_path = auth_settings.initial_data_load
     return await sync_to_async(test.check_if_all_models_are_empty)(generic_app_models)
 
