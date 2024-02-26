@@ -5,6 +5,7 @@ import traceback
 import asyncio
 from celery import shared_task
 from django.apps import AppConfig, apps
+from dpag.DjangoProcessAdminGeneric.settings import repo_name
 from asgiref.sync import sync_to_async
 import nest_asyncio
 
@@ -47,7 +48,8 @@ class GenericAppConfig(AppConfig):
 
     def ready(self):
         generic_app_models = {f"{model.__name__}": model for model in
-                              set(apps.get_app_config('generic_app').models.values())}
+                              set(list(apps.get_app_config('generic_app').models.values())
+                                  + list(apps.get_app_config(repo_name).models.values()))}
         nest_asyncio.apply()
         asyncio.run(self.async_ready(generic_app_models))
 
