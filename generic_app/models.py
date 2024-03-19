@@ -186,7 +186,7 @@ while i < len(files):
                 traceback.print_exc()
 
 try:
-    mod_files = list(Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent.glob("./**/_ModifcationRestrictions.py"))
+    mod_files = list(Path.cwd().glob("**/_authentication_settings.py"))
     if len(mod_files) == 1:
         mod_file = mod_files[0]
         name = mod_file.stem
@@ -197,7 +197,7 @@ try:
 except Exception:
     pass
 
-auth_files = list(Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent.glob("./**/_authentication_settings.py"))
+auth_files = list(Path.cwd().glob("**/_authentication_settings.py"))
 if len(auth_files) > 0:
     auth_file = auth_files[0]
     name = auth_file.stem
