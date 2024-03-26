@@ -33,7 +33,6 @@ class ProcessAdminTestCase(TestCase):
     def setUpCloudStorage(self, generic_app_models) -> None:
         from datetime import datetime
         self.t0 = datetime.now()
-        One.frontendId = "TestCase"
         self.tagged_objects = {}
         test_data = self.get_test_data()
         for object in test_data:
@@ -84,7 +83,6 @@ class ProcessAdminTestCase(TestCase):
     def setUp(self, generic_app_models) -> None:
         from datetime import datetime
         self.t0 = datetime.now()
-        One.frontendId = "TestCase"
         self.tagged_objects = {}
         test_data = self.get_test_data()
         for object in test_data:
