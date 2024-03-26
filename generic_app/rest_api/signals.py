@@ -1,6 +1,6 @@
 import os
 
-from ProcessAdminRestApi.calculated_model_updates.update_handler import CalculatedModelUpdateHandler
+from generic_app.rest_api.calculated_model_updates.update_handler import CalculatedModelUpdateHandler
 from django.dispatch import receiver
 
 from django.db.models.signals import post_save

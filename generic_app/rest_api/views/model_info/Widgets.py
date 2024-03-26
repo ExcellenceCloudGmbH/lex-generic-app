@@ -2,7 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from ProcessAdminRestApi.views.permissions.UserPermission import UserPermission
+from generic_app.rest_api.views.permissions.UserPermission import UserPermission
 from django.http import JsonResponse
 from generic_app import models
 

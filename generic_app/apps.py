@@ -55,7 +55,7 @@ class GenericAppConfig(AppConfig):
         """
         Check conditions and decide whether to load data asynchronously.
         """
-        from ProcessAdminRestApi.tests.ProcessAdminTestCase import ProcessAdminTestCase
+        from generic_app.rest_api.tests.ProcessAdminTestCase import ProcessAdminTestCase
         from generic_app.models import auth_settings
 
         test = ProcessAdminTestCase()

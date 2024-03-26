@@ -7,9 +7,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_api_key.permissions import HasAPIKey
 
-from ProcessAdminRestApi.generic_filters import UserReadRestrictionFilterBackend, ForeignKeyFilterBackend
-from ProcessAdminRestApi.model_collection.model_collection import get_relation_fields
-from ProcessAdminRestApi.views.model_entries.filter_backends import PrimaryKeyListFilterBackend
+from generic_app.rest_api.generic_filters import UserReadRestrictionFilterBackend, ForeignKeyFilterBackend
+from generic_app.rest_api.model_collection.model_collection import get_relation_fields
+from generic_app.rest_api.views.model_entries.filter_backends import PrimaryKeyListFilterBackend
 
 
 class ModelExportView(GenericAPIView):

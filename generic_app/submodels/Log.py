@@ -13,9 +13,9 @@ from django.core.files import File
 from django.core.files.storage import default_storage
 
 from DjangoProcessAdminGeneric import settings
-from ProcessAdminRestApi.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
-from ProcessAdminRestApi.models.fields.XLSX_field import XLSXField
-from ProcessAdminRestApi.helpers import convert_dfs_in_excel
+from generic_app.rest_api.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
+from generic_app.rest_api.models.fields.XLSX_field import XLSXField
+from generic_app.rest_api.helpers import convert_dfs_in_excel
 from generic_app import models
 from generic_app.submodels.CalculationLog import CalculationLog
 

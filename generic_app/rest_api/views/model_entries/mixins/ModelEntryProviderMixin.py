@@ -1,7 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_api_key.permissions import HasAPIKey
 
-from ProcessAdminRestApi.views.permissions.UserPermission import UserPermission
+from generic_app.rest_api.views.permissions.UserPermission import UserPermission
 
 
 class ModelEntryProviderMixin:

@@ -4,31 +4,31 @@ from django.http import HttpResponse
 from django.urls import path, register_converter
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from ProcessAdminRestApi.auth import TokenObtainPairWithUserView
-from ProcessAdminRestApi.calculated_model_updates.objects_to_recalculate_store import ObjectsToRecalculateStore
-from ProcessAdminRestApi.calculated_model_updates.update_handler import CalculatedModelUpdateHandler
-from ProcessAdminRestApi.model_collection.model_collection import ModelCollection
-from ProcessAdminRestApi.models.calculated_model import CalculatedModelMixin
-from ProcessAdminRestApi.models.model_process_admin import ModelProcessAdmin
-from ProcessAdminRestApi.views.file_operations.FileDownload import FileDownloadView
-from ProcessAdminRestApi.views.file_operations.ModelExport import ModelExportView
-from ProcessAdminRestApi.views.sharepoint.SharePointFileDownload import SharePointFileDownload
-from ProcessAdminRestApi.views.sharepoint.SharePointPreview import SharePointPreview
-from ProcessAdminRestApi.views.sharepoint.SharePointShareLink import SharePointShareLink
-from ProcessAdminRestApi.signals import do_post_save
+from generic_app.rest_api.auth import TokenObtainPairWithUserView
+from generic_app.rest_api.calculated_model_updates.objects_to_recalculate_store import ObjectsToRecalculateStore
+from generic_app.rest_api.calculated_model_updates.update_handler import CalculatedModelUpdateHandler
+from generic_app.rest_api.model_collection.model_collection import ModelCollection
+from generic_app.rest_api.models.calculated_model import CalculatedModelMixin
+from generic_app.rest_api.models.model_process_admin import ModelProcessAdmin
+from generic_app.rest_api.views.file_operations.FileDownload import FileDownloadView
+from generic_app.rest_api.views.file_operations.ModelExport import ModelExportView
+from generic_app.rest_api.views.sharepoint.SharePointFileDownload import SharePointFileDownload
+from generic_app.rest_api.views.sharepoint.SharePointPreview import SharePointPreview
+from generic_app.rest_api.views.sharepoint.SharePointShareLink import SharePointShareLink
+from generic_app.rest_api.signals import do_post_save
 
-from ProcessAdminRestApi.views.model_info.Fields import Fields
-from ProcessAdminRestApi.views.model_info.Widgets import Widgets
-from ProcessAdminRestApi.views.model_relation_views import ModelStructureObtainView, Overview, ProcessStructure
-from ProcessAdminRestApi.views.model_entries.List import ListModelEntries
-from ProcessAdminRestApi.views.model_entries.Many import ManyModelEntries
-from ProcessAdminRestApi.views.model_entries.One import OneModelEntry
-from ProcessAdminRestApi.views.permissions.ModelPermissions import ModelPermissions
-from ProcessAdminRestApi.views.process_flow.CreateOrUpdate import CreateOrUpdate
-from ProcessAdminRestApi.views.project_info.ProjectInfo import ProjectInfo
+from generic_app.rest_api.views.model_info.Fields import Fields
+from generic_app.rest_api.views.model_info.Widgets import Widgets
+from generic_app.rest_api.views.model_relation_views import ModelStructureObtainView, Overview, ProcessStructure
+from generic_app.rest_api.views.model_entries.List import ListModelEntries
+from generic_app.rest_api.views.model_entries.Many import ManyModelEntries
+from generic_app.rest_api.views.model_entries.One import OneModelEntry
+from generic_app.rest_api.views.permissions.ModelPermissions import ModelPermissions
+from generic_app.rest_api.views.process_flow.CreateOrUpdate import CreateOrUpdate
+from generic_app.rest_api.views.project_info.ProjectInfo import ProjectInfo
 
-from ProcessAdminRestApi import converters
-from ProcessAdminRestApi.views.global_search_for_models.Search import Search
+from generic_app.rest_api.import converters
+from generic_app.rest_api.views.global_search_for_models.Search import Search
 
 class ProcessAdminSite:
     """

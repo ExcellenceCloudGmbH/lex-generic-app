@@ -5,12 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from ProcessAdminRestApi.models.fields.Bokeh_field import BokehField
-from ProcessAdminRestApi.models.fields.HTML_field import HTMLField
-from ProcessAdminRestApi.models.fields.PDF_field import PDFField
-from ProcessAdminRestApi.models.fields.XLSX_field import XLSXField
-from ProcessAdminRestApi.models.upload_model import CalculateField, IsCalculatedField
-from ProcessAdminRestApi.views.permissions.UserPermission import UserPermission
+from generic_app.rest_api.models.fields.Bokeh_field import BokehField
+from generic_app.rest_api.models.fields.HTML_field import HTMLField
+from generic_app.rest_api.models.fields.PDF_field import PDFField
+from generic_app.rest_api.models.fields.XLSX_field import XLSXField
+from generic_app.rest_api.models.upload_model import CalculateField, IsCalculatedField
+from generic_app.rest_api.views.permissions.UserPermission import UserPermission
 
 DJANGO_FIELD2TYPE_NAME = {
     ForeignKey: 'foreign_key',

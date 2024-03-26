@@ -1,4 +1,4 @@
-from ProcessAdminRestApi.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
+from generic_app.rest_api.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
 from generic_app import models
 
 

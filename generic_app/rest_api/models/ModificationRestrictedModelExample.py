@@ -1,6 +1,6 @@
 from django.db.models import Model
 
-from ProcessAdminRestApi.models.ModelModificationRestriction import ModelModificationRestriction
+from generic_app.rest_api.models.ModelModificationRestriction import ModelModificationRestriction
 
 
 class AdminReportsModificationRestriction(ModelModificationRestriction):

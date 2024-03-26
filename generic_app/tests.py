@@ -4,8 +4,8 @@ from django.test import TestCase
 from django.db import models
 # Create your models here.
 from django.db.models import Model, AutoField, TextField, FloatField, DateTimeField, ForeignKey, CASCADE
-from ProcessAdminRestApi.models.calculated_model import CalculatedModelMixin
-from ProcessAdminRestApi.models.upload_model import UploadModelMixin
+from generic_app.rest_api.models.calculated_model import CalculatedModelMixin
+from generic_app.rest_api.models.upload_model import UploadModelMixin
 import os
 from glob import glob
 from pathlib import Path

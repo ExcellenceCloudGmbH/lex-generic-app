@@ -7,22 +7,22 @@ from glob import glob
 
 from pathlib import Path
 
-from ProcessAdminRestApi.models.Created_by_model import CreatedByMixin
-from ProcessAdminRestApi.models.Process import Process
-from ProcessAdminRestApi.signals import custom_post_save
-from ProcessAdminRestApi.views.model_entries import One
+from generic_app.rest_api.models.Created_by_model import CreatedByMixin
+from generic_app.rest_api.models.Process import Process
+from generic_app.rest_api.signals import custom_post_save
+from generic_app.rest_api.views.model_entries import One
 from django.db.models import Model, AutoField, TextField, FloatField, DateTimeField, ForeignKey, CASCADE, FileField, \
     IntegerField, BooleanField
 
-from ProcessAdminRestApi.models.fields.HTML_field import HTMLField
-from ProcessAdminRestApi.models.fields.PDF_field import PDFField
-from ProcessAdminRestApi.models.fields.XLSX_field import XLSXField
-from ProcessAdminRestApi.models.fields.Bokeh_field import BokehField
+from generic_app.rest_api.models.fields.HTML_field import HTMLField
+from generic_app.rest_api.models.fields.PDF_field import PDFField
+from generic_app.rest_api.models.fields.XLSX_field import XLSXField
+from generic_app.rest_api.models.fields.Bokeh_field import BokehField
 
 from DjangoProcessAdminGeneric import settings
-from ProcessAdminRestApi.models.calculated_model import CalculatedModelMixin
-from ProcessAdminRestApi.models.html_report import HTMLReport
-from ProcessAdminRestApi.models.upload_model import UploadModelMixin, ConditionalUpdateMixin
+from generic_app.rest_api.models.calculated_model import CalculatedModelMixin
+from generic_app.rest_api.models.html_report import HTMLReport
+from generic_app.rest_api.models.upload_model import UploadModelMixin, ConditionalUpdateMixin
 from django.db.models import Model
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver

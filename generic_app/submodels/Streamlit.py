@@ -1,5 +1,5 @@
 import os
-from ProcessAdminRestApi.models.html_report import HTMLReport
+from generic_app.rest_api.models.html_report import HTMLReport
 
 class Streamlit(HTMLReport):
 

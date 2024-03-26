@@ -1,5 +1,5 @@
-from ProcessAdminRestApi.models.calculated_model import CalculatedModelMixin
-from ProcessAdminRestApi.models.process_admin_model import DependencyAnalysisMixin
+from generic_app.rest_api.models.calculated_model import CalculatedModelMixin
+from generic_app.rest_api.models.process_admin_model import DependencyAnalysisMixin
 
 
 def calc_and_save(entry):

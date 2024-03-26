@@ -5,8 +5,8 @@ from datetime import datetime
 
 from celery import current_task
 
-from ProcessAdminRestApi.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
-from ProcessAdminRestApi.views.model_entries import One
+from generic_app.rest_api.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
+from generic_app.rest_api.views.model_entries import One
 from generic_app import models
 import inspect
 from django.core.cache import cache

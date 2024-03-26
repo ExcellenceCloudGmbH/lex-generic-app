@@ -28,16 +28,16 @@ from rest_framework.views import APIView
 #
 from rest_framework_api_key.permissions import HasAPIKey
 
-from ProcessAdminRestApi.generic_filters import ForeignKeyFilterBackend, \
+from generic_app.rest_api.generic_filters import ForeignKeyFilterBackend, \
     PrimaryKeyListFilterBackend, StringFilterBackend
-from ProcessAdminRestApi.models.fields.Bokeh_field import BokehField
-from ProcessAdminRestApi.models.fields.HTML_field import HTMLField
-from ProcessAdminRestApi.models.fields.PDF_field import PDFField
-from ProcessAdminRestApi.models.fields.XLSX_field import XLSXField
-from ProcessAdminRestApi.models.upload_model import CalculateField, IsCalculatedField
-from ProcessAdminRestApi.serializers import model2serializer
-from ProcessAdminRestApi.views.pagination import CustomPageNumberPagination, CustomLimitOffsetPagination
-from ProcessAdminRestApi.views.model_entries.filter_backends import UserReadRestrictionFilterBackend
+from generic_app.rest_api.models.fields.Bokeh_field import BokehField
+from generic_app.rest_api.models.fields.HTML_field import HTMLField
+from generic_app.rest_api.models.fields.PDF_field import PDFField
+from generic_app.rest_api.models.fields.XLSX_field import XLSXField
+from generic_app.rest_api.models.upload_model import CalculateField, IsCalculatedField
+from generic_app.rest_api.serializers import model2serializer
+from generic_app.rest_api.views.pagination import CustomPageNumberPagination, CustomLimitOffsetPagination
+from generic_app.rest_api.views.model_entries.filter_backends import UserReadRestrictionFilterBackend
 from generic_app.submodels.UserChangeLog import UserChangeLog
 
 user_change_log = logging.getLogger("user_change_log")

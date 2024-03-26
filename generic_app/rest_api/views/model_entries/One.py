@@ -7,9 +7,9 @@ from rest_framework.exceptions import APIException
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 
-from ProcessAdminRestApi.views.model_entries.mixins.DestroyOneWithPayloadMixin import DestroyOneWithPayloadMixin
-from ProcessAdminRestApi.views.model_entries.mixins.ModelEntryProviderMixin import ModelEntryProviderMixin
-from ProcessAdminRestApi.views.utils import get_user_name, get_user_email
+from generic_app.rest_api.views.model_entries.mixins.DestroyOneWithPayloadMixin import DestroyOneWithPayloadMixin
+from generic_app.rest_api.views.model_entries.mixins.ModelEntryProviderMixin import ModelEntryProviderMixin
+from generic_app.rest_api.views.utils import get_user_name, get_user_email
 
 from django.core.cache import cache
 from django.db import transaction

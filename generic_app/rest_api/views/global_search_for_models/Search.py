@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from ProcessAdminRestApi.model_collection.model_collection import ModelCollection
-from ProcessAdminRestApi.views.permissions.UserPermission import UserPermission
+from generic_app.rest_api.model_collection.model_collection import ModelCollection
+from generic_app.rest_api.views.permissions.UserPermission import UserPermission
 
 EXCLUDED_MODELS = {'calculationdashboard', 'user', 'group', 'permission', 'contenttype', 'userchangelog',
                    'calculationlog', 'log', 'streamlit'}

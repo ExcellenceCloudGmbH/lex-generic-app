@@ -1,6 +1,6 @@
 from django.db.models import Model, TextField
 
-from ProcessAdminRestApi.views.model_entries import One
+from generic_app.rest_api.views.model_entries import One
 
 
 class CreatedByMixin(Model):

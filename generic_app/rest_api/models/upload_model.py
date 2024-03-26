@@ -9,7 +9,7 @@ from celery.signals import task_failure, task_success, task_postrun
 
 from django.db.models import Model, BooleanField
 
-from ProcessAdminRestApi.signals import update_calculation_status
+from generic_app.rest_api.signals import update_calculation_status
 from generic_app.submodels.Log import Log
 
 

@@ -1,7 +1,7 @@
 from django.db import transaction
 
-from ProcessAdminRestApi.calculated_model_updates.objects_to_recalculate_store import ObjectsToRecalculateStore
-from ProcessAdminRestApi.calculated_model_updates.update_handler import CalculatedModelUpdateHandler
+from generic_app.rest_api.calculated_model_updates.objects_to_recalculate_store import ObjectsToRecalculateStore
+from generic_app.rest_api.calculated_model_updates.update_handler import CalculatedModelUpdateHandler
 
 
 # Executes 'func' as an atomic transaction while only updating the entries dependent on the
