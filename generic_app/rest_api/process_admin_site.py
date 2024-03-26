@@ -13,7 +13,6 @@ from generic_app.rest_api.views.file_operations.ModelExport import ModelExportVi
 from generic_app.rest_api.views.sharepoint.SharePointFileDownload import SharePointFileDownload
 from generic_app.rest_api.views.sharepoint.SharePointPreview import SharePointPreview
 from generic_app.rest_api.views.sharepoint.SharePointShareLink import SharePointShareLink
-from generic_app.rest_api.signals import do_post_save
 
 from generic_app.rest_api.views.model_info.Fields import Fields
 from generic_app.rest_api.views.model_info.Widgets import Widgets
@@ -108,8 +107,7 @@ class ProcessAdminSite:
             else:
                 self.registered_models[model] = process_admin
                 # TODO why was this in here in the first place?
-                # if not issubclass(model, CalculatedModelMixin):
-                post_save.connect(do_post_save, sender=model)
+
 
     def create_model_objects(self, request):
         for model in self.registered_models:
