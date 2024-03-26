@@ -5,7 +5,7 @@ from datetime import datetime
 
 from celery import current_task
 
-from generic_app.rest_api.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
+from generic_app.generic_models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
 from generic_app.rest_api.views.model_entries import One
 from generic_app import generic_models
 import inspect

@@ -1,4 +1,4 @@
-from generic_app.rest_api.models.upload_model import UploadModelMixin
+from generic_app.generic_models.upload_model import UploadModelMixin
 
 
 def subtract_from_list(minuend_list, subtrahend_set):

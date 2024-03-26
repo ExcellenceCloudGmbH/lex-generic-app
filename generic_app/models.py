@@ -3,12 +3,12 @@ import traceback
 
 from pathlib import Path
 
-from generic_app.rest_api.models.Process import Process
+from generic_app.generic_models.Process import Process
 from django.db.models import FileField
 
 from dpag.DjangoProcessAdminGeneric import settings
-from generic_app.rest_api.models.html_report import HTMLReport
-from generic_app.rest_api.models.upload_model import UploadModelMixin
+from generic_app.generic_models.html_report import HTMLReport
+from generic_app.generic_models.upload_model import UploadModelMixin
 from django.db.models import Model
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver

@@ -9,7 +9,7 @@ from generic_app.generic_models.fields import BokehField
 from generic_app.generic_models.fields import HTMLField
 from generic_app.generic_models.fields import PDFField
 from generic_app.generic_models.fields import XLSXField
-from generic_app.rest_api.models.upload_model import CalculateField, IsCalculatedField
+from generic_app.generic_models.upload_model import CalculateField, IsCalculatedField
 from generic_app.rest_api.views.permissions.UserPermission import UserPermission
 
 DJANGO_FIELD2TYPE_NAME = {
