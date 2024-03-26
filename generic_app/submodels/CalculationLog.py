@@ -7,7 +7,7 @@ from celery import current_task
 
 from generic_app.generic_models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
 from generic_app.rest_api.views.model_entries import One
-from generic_app import generic_models
+from generic_app import models
 import inspect
 from django.core.cache import cache
 
@@ -15,16 +15,16 @@ from django.core.cache import cache
 # Severity could be something like 'Error', 'Warning', 'Caution', etc. (See Static variables below!)
 
 
-class CalculationLog(generic_models.Model):
+class CalculationLog(models.Model):
     modification_restriction = AdminReportsModificationRestriction()
-    id = generic_models.AutoField(primary_key=True)
-    timestamp = generic_models.DateTimeField()
-    trigger_name = generic_models.TextField(null=True)
-    message_type = generic_models.TextField(default="")
-    calculationId = generic_models.TextField(default='test_id')
-    message = generic_models.TextField()
-    method = generic_models.TextField()
-    is_notification = generic_models.BooleanField(default=False)
+    id = models.AutoField(primary_key=True)
+    timestamp = models.DateTimeField()
+    trigger_name = models.TextField(null=True)
+    message_type = models.TextField(default="")
+    calculationId = models.TextField(default='test_id')
+    message = models.TextField()
+    method = models.TextField()
+    is_notification = models.BooleanField(default=False)
 
     # Severities, to be concatenated with message in create statement
     SUCCESS = 'Success: '

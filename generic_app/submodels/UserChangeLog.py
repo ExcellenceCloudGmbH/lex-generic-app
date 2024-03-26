@@ -1,15 +1,15 @@
 from generic_app.generic_models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
-from generic_app import generic_models
+from generic_app import models
 
 
-class UserChangeLog(generic_models.Model):
+class UserChangeLog(models.Model):
     modification_restriction = AdminReportsModificationRestriction()
-    id = generic_models.AutoField(primary_key=True)
-    user_name = generic_models.TextField()
-    timestamp = generic_models.DateTimeField()
-    message = generic_models.TextField()
-    traceback = generic_models.TextField(default="", null=True)
-    calculationId = generic_models.TextField(default='-1')
+    id = models.AutoField(primary_key=True)
+    user_name = models.TextField()
+    timestamp = models.DateTimeField()
+    message = models.TextField()
+    traceback = models.TextField(default="", null=True)
+    calculationId = models.TextField(default='-1')
 
     def save(self, *args, **kwargs):
         if self.id is None:
