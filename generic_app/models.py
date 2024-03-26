@@ -225,10 +225,6 @@ processAdminSite.register_model_structure(model_structure)
 processAdminSite.register_model_styling(model_styling)
 processAdminSite.register_global_filter_structure(global_filter_structure)
 
-print("VSCode Password: ", VsCodePassword.get_vscode_password())
-
-
-
 print(f"checking for runserver, {sys.argv}")
 if sys.argv[1:2] == ["runserver"]:
     # Something specific to running "test"
