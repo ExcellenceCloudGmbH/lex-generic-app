@@ -5,7 +5,7 @@ import traceback
 import asyncio
 from celery import shared_task
 from django.apps import AppConfig, apps
-from DjangoProcessAdminGeneric.settings import repo_name
+from lex_app.settings import repo_name
 from asgiref.sync import sync_to_async
 import nest_asyncio
 
@@ -92,4 +92,4 @@ def running_in_uvicorn():
     """
     Check if the application is running in Uvicorn context.
     """
-    return sys.argv[-1:] == ["DjangoProcessAdminGeneric.asgi:application"]
+    return sys.argv[-1:] == ["lex_app.asgi:application"]
