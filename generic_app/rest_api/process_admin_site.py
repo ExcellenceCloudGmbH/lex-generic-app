@@ -5,11 +5,9 @@ from django.urls import path, register_converter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from generic_app.rest_api.auth import TokenObtainPairWithUserView
-from generic_app.rest_api.calculated_model_updates.objects_to_recalculate_store import ObjectsToRecalculateStore
-from generic_app.rest_api.calculated_model_updates.update_handler import CalculatedModelUpdateHandler
 from generic_app.rest_api.model_collection.model_collection import ModelCollection
-from generic_app.rest_api.models.calculated_model import CalculatedModelMixin
-from generic_app.rest_api.models.model_process_admin import ModelProcessAdmin
+from generic_app.generic_models.calculated_model import CalculatedModelMixin
+from generic_app.generic_models.model_process_admin import ModelProcessAdmin
 from generic_app.rest_api.views.file_operations.FileDownload import FileDownloadView
 from generic_app.rest_api.views.file_operations.ModelExport import ModelExportView
 from generic_app.rest_api.views.sharepoint.SharePointFileDownload import SharePointFileDownload
@@ -49,11 +47,6 @@ class ProcessAdminSite:
 
         self.initialized = False
         self.model_collection = None
-
-        # Instantiating singleton classes
-        CalculatedModelUpdateHandler()
-        ObjectsToRecalculateStore()
-
     def register_model_styling(self, model_styling):
         """
         :param model_styling: dict that contains styling parameters for each model
@@ -181,7 +174,6 @@ class ProcessAdminSite:
         if not self.initialized:
             self.model_collection = ModelCollection(self.registered_models, self.model_structure,
                                                     self.model_styling, self.global_filter_structure)
-            CalculatedModelUpdateHandler.instance.set_model_collection(self.model_collection)
             self.initialized = True
 
         return self._get_urls(), 'process_admin', self.name  # TODO: what is the name exactly for??

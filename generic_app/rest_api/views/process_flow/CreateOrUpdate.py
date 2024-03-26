@@ -20,7 +20,7 @@ user_email = None
 class CreateOrUpdate(ModelEntryProviderMixin, DestroyOneWithPayloadMixin, RetrieveUpdateDestroyAPIView, CreateAPIView):
     def update(self, request, *args, **kwargs):
         from generic_app.submodels.UserChangeLog import UserChangeLog
-        from generic_app.models import update_handler
+        from generic_app.generic_models import update_handler
         model_container = self.kwargs['model_container']
         global user_name
         global user_email

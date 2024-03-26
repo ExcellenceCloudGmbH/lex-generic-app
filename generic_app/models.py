@@ -1,33 +1,19 @@
-from datetime import datetime
-
-import asyncio
 import os
 import traceback
-from glob import glob
 
 from pathlib import Path
 
-from generic_app.rest_api.models.Created_by_model import CreatedByMixin
 from generic_app.rest_api.models.Process import Process
-from generic_app.rest_api.signals import custom_post_save
-from generic_app.rest_api.views.model_entries import One
-from django.db.models import Model, AutoField, TextField, FloatField, DateTimeField, ForeignKey, CASCADE, FileField, \
-    IntegerField, BooleanField
+from django.db.models import FileField
 
-from generic_app.rest_api.models.fields.HTML_field import HTMLField
-from generic_app.rest_api.models.fields.PDF_field import PDFField
-from generic_app.rest_api.models.fields.XLSX_field import XLSXField
-from generic_app.rest_api.models.fields.Bokeh_field import BokehField
-
-from DjangoProcessAdminGeneric import settings
-from generic_app.rest_api.models.calculated_model import CalculatedModelMixin
+from dpag.DjangoProcessAdminGeneric import settings
 from generic_app.rest_api.models.html_report import HTMLReport
-from generic_app.rest_api.models.upload_model import UploadModelMixin, ConditionalUpdateMixin
+from generic_app.rest_api.models.upload_model import UploadModelMixin
 from django.db.models import Model
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 
-from DjangoProcessAdminGeneric.ProcessAdminSettings import processAdminSite, adminSite
+from dpag.DjangoProcessAdminGeneric.ProcessAdminSettings import processAdminSite, adminSite
 
 from generic_app.views import VsCodePassword
 print("Importing sys")
@@ -102,8 +88,6 @@ from generic_app.submodels.UserChangeLog import UserChangeLog
 from generic_app.submodels.CalculationLog import CalculationLog
 from generic_app.submodels.Log import Log
 from generic_app.submodels.Streamlit import Streamlit
-from asgiref.sync import sync_to_async
-import nest_asyncio
 
 # migrations need to lie on the top level of the repository. Therefore, the
 repo_name = settings.repo_name

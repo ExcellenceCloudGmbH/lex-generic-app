@@ -5,10 +5,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from generic_app.rest_api.models.fields.Bokeh_field import BokehField
-from generic_app.rest_api.models.fields.HTML_field import HTMLField
-from generic_app.rest_api.models.fields.PDF_field import PDFField
-from generic_app.rest_api.models.fields.XLSX_field import XLSXField
+from generic_app.generic_models.fields import BokehField
+from generic_app.generic_models.fields import HTMLField
+from generic_app.generic_models.fields import PDFField
+from generic_app.generic_models.fields import XLSXField
 from generic_app.rest_api.models.upload_model import CalculateField, IsCalculatedField
 from generic_app.rest_api.views.permissions.UserPermission import UserPermission
 

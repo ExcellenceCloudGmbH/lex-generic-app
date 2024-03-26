@@ -12,20 +12,19 @@ from django.core.cache import cache
 from django.core.files import File
 from django.core.files.storage import default_storage
 
-from DjangoProcessAdminGeneric import settings
 from generic_app.rest_api.models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
-from generic_app.rest_api.models.fields.XLSX_field import XLSXField
+from generic_app.generic_models.fields import XLSXField
 from generic_app.rest_api.helpers import convert_dfs_in_excel
-from generic_app import models
+from generic_app import generic_models
 from generic_app.submodels.CalculationLog import CalculationLog
 
 
-class Log(models.CalculatedModelMixin, models.Model):
+class Log(generic_models.CalculatedModelMixin, generic_models.Model):
     modification_restriction = AdminReportsModificationRestriction()
-    id = models.AutoField(primary_key=True)
-    group = models.TextField(null=True)
-    logfile = models.XLSXField(default='', max_length=300)
-    input_validation = models.XLSXField(default='', max_length=300)
+    id = generic_models.AutoField(primary_key=True)
+    group = generic_models.TextField(null=True)
+    logfile = generic_models.XLSXField(default='', max_length=300)
+    input_validation = generic_models.XLSXField(default='', max_length=300)
 
     t0 = datetime.datetime.now()
 

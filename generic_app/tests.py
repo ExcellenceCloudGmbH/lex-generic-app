@@ -1,18 +1,9 @@
 from django.test import TestCase
 
 # Create your tests here.
-from django.db import models
 # Create your models here.
-from django.db.models import Model, AutoField, TextField, FloatField, DateTimeField, ForeignKey, CASCADE
-from generic_app.rest_api.models.calculated_model import CalculatedModelMixin
-from generic_app.rest_api.models.upload_model import UploadModelMixin
-import os
 from glob import glob
 from pathlib import Path
-
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from DjangoProcessAdminGeneric.ProcessAdminSettings import processAdminSite, adminSite
 
 # Find all files in submodels and import them via exec
 # Find the app name as the nameof the directory this file is in
