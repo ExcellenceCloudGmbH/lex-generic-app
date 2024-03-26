@@ -19,7 +19,7 @@ from generic_app.generic_models.fields.PDF_field import PDFField
 from generic_app.generic_models.fields.XLSX_field import XLSXField
 from generic_app.generic_models.fields.Bokeh_field import BokehField
 
-from dpag.DjangoProcessAdminGeneric import settings
+from DjangoProcessAdminGeneric import settings
 from generic_app.generic_models.calculated_model import CalculatedModelMixin
 from generic_app.generic_models.html_report import HTMLReport
 from generic_app.generic_models.upload_model import UploadModelMixin, ConditionalUpdateMixin
@@ -27,7 +27,7 @@ from django.db.models import Model
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 
-from dpag.DjangoProcessAdminGeneric.ProcessAdminSettings import processAdminSite, adminSite
+from DjangoProcessAdminGeneric.ProcessAdminSettings import processAdminSite, adminSite
 
 print("Importing sys")
 import sys

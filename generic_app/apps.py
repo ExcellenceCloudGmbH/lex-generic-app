@@ -5,7 +5,7 @@ import traceback
 import asyncio
 from celery import shared_task
 from django.apps import AppConfig, apps
-from dpag.DjangoProcessAdminGeneric.settings import repo_name
+from DjangoProcessAdminGeneric.settings import repo_name
 from asgiref.sync import sync_to_async
 import nest_asyncio
 

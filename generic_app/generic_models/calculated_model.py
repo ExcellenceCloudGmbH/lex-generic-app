@@ -6,7 +6,7 @@ from celery.result import ResultSet, allow_join_result
 from django.db.models import Model, TextField, UniqueConstraint
 from django.db.models.base import ModelBase
 
-from dpag.DjangoProcessAdminGeneric import settings
+from DjangoProcessAdminGeneric import settings
 def _flatten(list_2d):
     return list(itertools.chain.from_iterable(list_2d))
 
