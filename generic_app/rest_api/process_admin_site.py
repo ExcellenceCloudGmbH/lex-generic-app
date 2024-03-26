@@ -27,7 +27,7 @@ from generic_app.rest_api.views.permissions.ModelPermissions import ModelPermiss
 from generic_app.rest_api.views.process_flow.CreateOrUpdate import CreateOrUpdate
 from generic_app.rest_api.views.project_info.ProjectInfo import ProjectInfo
 
-from generic_app.rest_api.import converters
+from generic_app.rest_api import converters
 from generic_app.rest_api.views.global_search_for_models.Search import Search
 
 class ProcessAdminSite:
