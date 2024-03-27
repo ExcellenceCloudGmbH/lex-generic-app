@@ -63,6 +63,7 @@ class GenericAppConfig(AppConfig):
         if (not running_in_uvicorn()
                 or os.getenv("CELERY_ACTIVE")
                 or not auth_settings
+                or not hasattr(auth_settings, 'initial_data_load')
                 or not auth_settings.initial_data_load):
             return
 
