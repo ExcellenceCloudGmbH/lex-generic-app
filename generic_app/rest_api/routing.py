@@ -12,7 +12,7 @@ websocket_urlpatterns = [
                  name='calculations'),
     path('ws/calculation_logs/<str:calculationId>', CalculationLogConsumer.as_asgi(),
          name='calculation-logs'),
-    path('ws/calculation_status_update/<str:host>', UpdateCalculationStatusConsumer.as_asgi(),
+    path('ws/calculation_status_update', UpdateCalculationStatusConsumer.as_asgi(),
          name='calculation-status-update'),
 
 ]
