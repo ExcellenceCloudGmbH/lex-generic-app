@@ -17,6 +17,8 @@ from generic_app.generic_models.fields.XLSX_field import XLSXField
 from generic_app.rest_api.helpers import convert_dfs_in_excel
 from generic_app import models
 from generic_app.submodels.CalculationLog import CalculationLog
+from generic_app.rest_api.context import context_id
+from generic_app.submodels.CalculationIDs import CalculationIDs
 
 
 class Log(models.CalculatedModelMixin, models.Model):
@@ -45,8 +47,10 @@ class Log(models.CalculatedModelMixin, models.Model):
                 if (hasattr(function, 'delay') and
                     os.getenv("DEPLOYMENT_ENVIRONMENT")
                         and os.getenv("ARCHITECTURE") == "MQ/Worker"):
+                    obj = CalculationIDs.objects.filter(context_id=context_id.get()).first()
+                    calculation_id = getattr(obj, "calculation_id", "test_id")
                     return_value = function.apply_async(args=args, kwargs=kwargs,
-                                                        task_id=f"{str(threading.get_ident())}-{str(uuid.uuid4())}")
+                                                        task_id=str(calculation_id))
                     self.celery_result = return_value
                 else:
                     log_filter = self.get_log_filter()
@@ -83,9 +87,11 @@ class Log(models.CalculatedModelMixin, models.Model):
         self.filter = args[0].get_log_filter()[0]
         for element in self.filter:
             if current_task and os.getenv("CELERY_ACTIVE"):
-                calculation_id = cache.get(str(current_task.request.id).split("-")[0], "test_id")
+                calculation_id = str(current_task.request.id)
             else:
-                calculation_id = cache.get(threading.get_ident(), "test_id")
+                obj = CalculationIDs.objects.filter(
+                    calculation_record=f"{args[0]._meta.model_name}_{args[0].pk}").first()
+                calculation_id = getattr(obj, "calculation_id", "test_id")
             logs = pd.DataFrame.from_records(CalculationLog.objects.filter(calculationId=calculation_id, method__contains=element).values().order_by('timestamp'))
 
             if len(logs) > 0 and 'create' not in calculation_id:

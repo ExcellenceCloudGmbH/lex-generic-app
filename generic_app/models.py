@@ -71,7 +71,7 @@ def is_special_file(file):
             file.stem.endswith("create_db") or
             file.stem.endswith("Log") or
             file.stem.endswith("Streamlit") or
-            file.stem.endswith("run_dpag"))
+            file.stem.endswith("CalculationIDs"))
 
 
 def is_included_in_model_structure(file):
@@ -99,6 +99,7 @@ base_path = Path(os.getenv("PROJECT_ROOT")).resolve()
 files = [f for f in base_path.glob("./**/[!_]*.py") if 'venv' not in f.parts and 'build' not in f.parts]
 from generic_app.submodels.UserChangeLog import UserChangeLog
 from generic_app.submodels.CalculationLog import CalculationLog
+from generic_app.submodels.CalculationIDs import CalculationIDs
 from generic_app.submodels.Log import Log
 from generic_app.submodels.Streamlit import Streamlit
 
@@ -106,8 +107,8 @@ from generic_app.submodels.Streamlit import Streamlit
 repo_name = settings.repo_name
 settings.MIGRATION_MODULES[repo_name] = f'{repo_name}.migrations'
 
-processAdminSite.register([UserChangeLog, CalculationLog, Log, Streamlit])
-adminSite.register([UserChangeLog, CalculationLog, Log])
+processAdminSite.register([UserChangeLog, CalculationIDs, CalculationLog, Log])
+adminSite.register([UserChangeLog, CalculationIDs, CalculationLog, Log])
 processAdminSite.registerHTMLReport("streamlit", Streamlit)
 
 model_structure_defined = False
@@ -255,44 +256,44 @@ def update_handler(sender, **kwargs):
             # @custom_shared_task decorator is not used
             sender.update(kwargs["instance"])
 
-@receiver(post_delete)
-def delete_file(sender, instance, **kwargs):
-    """
-    Whenever a model instance is deleted, check if it has 'file' attribute and if so,
-    deletes the file too.
-    """
-    if os.getenv("STORAGE_TYPE") and os.getenv("STORAGE_TYPE") != "LEGACY":
-        for f in instance._meta.get_fields():
-            if isinstance(f, FileField):  # Check if the field is FileField
-                file_field = instance._meta.get_field(f.name)
-                field_value = file_field.value_from_object(instance)
-                if field_value and hasattr(field_value, 'name'):
-                    file_field.storage.delete(field_value.name)
-
-@receiver(pre_save)
-def delete_old_file_on_change(sender, instance, **kwargs):
-    if os.getenv("STORAGE_TYPE") and os.getenv("STORAGE_TYPE") != "LEGACY":
-        if not issubclass(sender, Model):
-            return
-
-        try:
-            # getting the instance from the database, if exists.
-            # if the instance is not in the database yet, we skip the function.
-            obj = sender.objects.get(pk=instance.pk)
-        except sender.DoesNotExist:
-            return
-
-        for field in sender._meta.get_fields():
-            if not isinstance(field, FileField):  # Check if the field is FileField
-                continue
-
-            try:
-                instance_file = getattr(instance, field.name)
-                obj_file = getattr(obj, field.name)
-
-                if instance_file != obj_file and obj_file.name:
-                    obj_file.storage.delete(obj_file.name)
-            except (AttributeError, ValueError):
-                continue
+# @receiver(post_delete)
+# def delete_file(sender, instance, **kwargs):
+#     """
+#     Whenever a model instance is deleted, check if it has 'file' attribute and if so,
+#     deletes the file too.
+#     """
+#     if os.getenv("STORAGE_TYPE") and os.getenv("STORAGE_TYPE") != "LEGACY":
+#         for f in instance._meta.get_fields():
+#             if isinstance(f, FileField):  # Check if the field is FileField
+#                 file_field = instance._meta.get_field(f.name)
+#                 field_value = file_field.value_from_object(instance)
+#                 if field_value and hasattr(field_value, 'name'):
+#                     file_field.storage.delete(field_value.name)
+#
+# @receiver(pre_save)
+# def delete_old_file_on_change(sender, instance, **kwargs):
+#     if os.getenv("STORAGE_TYPE") and os.getenv("STORAGE_TYPE") != "LEGACY":
+#         if not issubclass(sender, Model):
+#             return
+#
+#         try:
+#             # getting the instance from the database, if exists.
+#             # if the instance is not in the database yet, we skip the function.
+#             obj = sender.objects.get(pk=instance.pk)
+#         except sender.DoesNotExist:
+#             return
+#
+#         for field in sender._meta.get_fields():
+#             if not isinstance(field, FileField):  # Check if the field is FileField
+#                 continue
+#
+#             try:
+#                 instance_file = getattr(instance, field.name)
+#                 obj_file = getattr(obj, field.name)
+#
+#                 if instance_file != obj_file and obj_file.name:
+#                     obj_file.storage.delete(obj_file.name)
+#             except (AttributeError, ValueError):
+#                 continue
 
 

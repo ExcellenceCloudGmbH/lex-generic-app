@@ -2,7 +2,7 @@ import os
 from io import BytesIO
 
 from django.http import FileResponse, JsonResponse
-from django_sharepoint_storage.SharePointClients import ctx
+from django_sharepoint_storage.SharePointContext import SharePointContext
 from django_sharepoint_storage.SharePointCloudStorageUtils import get_server_relative_path
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -16,6 +16,7 @@ class FileDownloadView(APIView):
 
     def get(self, request, *args, **kwargs):
         model = kwargs['model_container'].model_class
+        shrp_ctx = SharePointContext()
         instance = model.objects.filter(pk=request.query_params['pk'])[0]
         file = instance.__getattribute__(request.query_params['field'])
 
@@ -26,8 +27,8 @@ class FileDownloadView(APIView):
             file_url = file.url
 
         if os.getenv("STORAGE_TYPE") == "SHAREPOINT":
-            file = ctx.web.get_file_by_server_relative_path(get_server_relative_path(file.url)).execute_query()
-            binary_file = file.open_binary(ctx, get_server_relative_path(file_url))
+            file = shrp_ctx.ctx.web.get_file_by_server_relative_path(get_server_relative_path(file.url)).execute_query()
+            binary_file = file.open_binary(shrp_ctx.ctx, get_server_relative_path(file_url))
             bytesio_object = BytesIO(binary_file.content)
             return FileResponse(bytesio_object)
         elif os.getenv("STORAGE_TYPE") == "GCS":

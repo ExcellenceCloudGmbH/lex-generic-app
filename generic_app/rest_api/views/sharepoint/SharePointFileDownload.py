@@ -1,7 +1,8 @@
+from django.core.files.storage import default_storage
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
-from django.http import JsonResponse
+from django.http import FileResponse
 
 
 class SharePointFileDownload(APIView):
@@ -14,4 +15,4 @@ class SharePointFileDownload(APIView):
         instance = model.objects.filter(pk=request.query_params['pk'])[0]
         file = instance.__getattribute__(request.query_params['field'])
 
-        return JsonResponse({"download_url": file.url})
+        return FileResponse(default_storage.open(file.name, "rb"))

@@ -10,6 +10,7 @@ class UserChangeLog(models.Model):
     message = models.TextField()
     traceback = models.TextField(default="", null=True)
     calculationId = models.TextField(default='-1')
+    calculation_record = models.TextField(default="legacy")
 
     def save(self, *args, **kwargs):
         if self.id is None:

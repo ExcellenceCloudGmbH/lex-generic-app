@@ -6,10 +6,12 @@ from datetime import datetime
 from celery import current_task
 
 from generic_app.generic_models.ModificationRestrictedModelExample import AdminReportsModificationRestriction
-from generic_app.rest_api.views.model_entries import One
+from generic_app.rest_api.context import context_id
 from generic_app import models
 import inspect
 from django.core.cache import cache
+
+from generic_app.submodels.CalculationIDs import CalculationIDs
 
 #### Note: Messages shall be delivered in the following format: "Severity: Message" The colon and the whitespace after are required for the code to work correctly ####
 # Severity could be something like 'Error', 'Warning', 'Caution', etc. (See Static variables below!)
@@ -22,6 +24,7 @@ class CalculationLog(models.Model):
     trigger_name = models.TextField(null=True)
     message_type = models.TextField(default="")
     calculationId = models.TextField(default='test_id')
+    calculation_record = models.TextField(default="legacy")
     message = models.TextField()
     method = models.TextField()
     is_notification = models.BooleanField(default=False)
@@ -45,14 +48,25 @@ class CalculationLog(models.Model):
 
     @classmethod
     def create(cls, message, message_type="Progress", trigger_name=None, is_notification=False):
-        trace_objects = cls.get_trace_objects()
+        trace_objects = cls.get_trace_objects()["trace_objects"]
+        calculation_record = cls.get_trace_objects()["first_model_info"]
 
         if current_task and os.getenv("CELERY_ACTIVE"):
-            calculation_id = cache.get(str(current_task.request.id).split("-")[0], "test_id")
+            obj, created = CalculationIDs.objects.get_or_create(calculation_record=calculation_record,
+                                                                calculation_id=str(current_task.request.id),
+                                                                defaults={
+                                                                    'context_id': getattr(CalculationIDs.objects.filter(calculation_id=str(current_task.request.id)).first(), "context_id", "test_id")})
+            calculation_id = getattr(obj, "calculation_id", "test_id")
         else:
-            calculation_id = cache.get(threading.get_ident(), "test_id")
+            obj, created = CalculationIDs.objects.get_or_create(calculation_record=calculation_record,
+                                                                context_id=context_id.get() if context_id.get() else "test_id",
+                                                                defaults={
+                                                                    'calculation_id': getattr(CalculationIDs.objects.filter(context_id=context_id.get()).first(), "calculation_id", "test_id")})
+            calculation_id = getattr(obj, "calculation_id", "test_id")
 
-        calc_log = CalculationLog(timestamp=datetime.now(), method=str(trace_objects), message=message, calculationId=calculation_id, message_type=message_type,
+        calc_log = CalculationLog(timestamp=datetime.now(), method=str(trace_objects),
+                                  calculation_record=calculation_record, message=message, calculationId=calculation_id,
+                                  message_type=message_type,
                                   trigger_name=trigger_name, is_notification=is_notification)
         calc_log.save()
 
@@ -65,6 +79,8 @@ class CalculationLog(models.Model):
         stack = list(traceback.extract_stack())
         currentframe = inspect.currentframe()
         trace_objects = []
+        trace_objects_class_list = []
+        first_model_info = None
         i = 0
         while currentframe is not None:
             if 'self' in currentframe.f_locals:
@@ -76,9 +92,22 @@ class CalculationLog(models.Model):
             currentframe = currentframe.f_back
             if f"generic_app{os.sep}submodels" in filename and not "CalculationLog" in filename:
                 trimmed_filename = filename.split(os.sep)[-1].split(".")[0]
+                if tempobject and not first_model_info:
+                    model_verbose_name = tempobject._meta.model_name
+                    record_id = getattr(tempobject, 'id', None)
+                    if model_verbose_name and record_id:
+                        first_model_info = f"{model_verbose_name}_{record_id}"
                 trace_objects.append((trimmed_filename, methodname, lineno, str(tempobject)))
+                trace_objects_class_list.append(tempobject._meta.model_name)
         trace_objects.reverse()
-        return trace_objects
+
+        result = {
+            "trace_objects": trace_objects,
+            "first_model_info": first_model_info,
+            "trace_objects_class_list": list(set(trace_objects_class_list))
+        }
+
+        return result
 
     @classmethod
     def assertTrue(cls, assertion, message):

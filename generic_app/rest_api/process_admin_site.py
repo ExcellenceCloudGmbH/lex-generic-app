@@ -24,6 +24,7 @@ from generic_app.rest_api.views.model_entries.One import OneModelEntry
 from generic_app.rest_api.views.permissions.ModelPermissions import ModelPermissions
 from generic_app.rest_api.views.process_flow.CreateOrUpdate import CreateOrUpdate
 from generic_app.rest_api.views.project_info.ProjectInfo import ProjectInfo
+from generic_app.rest_api.views.calculations.InitCalculationLogs import InitCalculationLogs
 
 from generic_app.rest_api import converters
 from generic_app.rest_api.views.global_search_for_models.Search import Search
@@ -151,6 +152,8 @@ class ProcessAdminSite:
             path('api/project-info', ProjectInfo.as_view(),
                  name='project-info'),
             path('api/widget_structure', Widgets.as_view(), name='widget-structure'),
+            path('api/init-calculation-logs', InitCalculationLogs.as_view(),
+                 name='init-calculation-logs'),
         ]
 
         url_patterns_for_model_info = [

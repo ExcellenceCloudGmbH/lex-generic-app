@@ -10,7 +10,8 @@ from celery.signals import task_failure, task_success, task_postrun
 from django.db.models import Model, BooleanField
 
 from generic_app.rest_api.signals import update_calculation_status
-from generic_app.submodels.Log import Log
+from generic_app.submodels.CalculationIDs import CalculationIDs
+from ProcessAdminRestApi.context import context_id
 
 
 def custom_shared_task(function):
@@ -111,7 +112,9 @@ class ConditionalUpdateMixin(Model):
                 if (hasattr(function, 'delay') and
                     os.getenv("DEPLOYMENT_ENVIRONMENT")
                         and os.getenv("ARCHITECTURE") == "MQ/Worker"):
-                    return_value = function.apply_async(args=args, kwargs=kwargs, task_id=f"{str(threading.get_ident())}-{str(uuid.uuid4())}")
+                    obj = CalculationIDs.objects.filter(context_id=context_id.get()).first()
+                    calculation_id = getattr(obj, "calculation_id", "test_id")
+                    return_value = function.apply_async(args=args, kwargs=kwargs, task_id=str(calculation_id))
                     self.celery_result = return_value
                 else:
                     return_value = function(*args, **kwargs)
