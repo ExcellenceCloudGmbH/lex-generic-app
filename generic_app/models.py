@@ -107,7 +107,7 @@ from generic_app.submodels.Streamlit import Streamlit
 repo_name = settings.repo_name
 settings.MIGRATION_MODULES[repo_name] = f'{repo_name}.migrations'
 
-processAdminSite.register([UserChangeLog, CalculationIDs, CalculationLog, Log])
+processAdminSite.register([UserChangeLog, CalculationIDs, CalculationLog, Streamlit, Log])
 adminSite.register([UserChangeLog, CalculationIDs, CalculationLog, Log])
 processAdminSite.registerHTMLReport("streamlit", Streamlit)
 
@@ -218,8 +218,9 @@ if not model_structure_defined:
                 insert_model_to_structure(model_structure, subfolders, imported_class._meta.model_name)
 
 model_structure = shorten_model_structure(model_structure)
-model_structure['Streamlit'] = {'streamlit': None}
 model_structure['Z_Reports'] = {'userchangelog': None, 'calculationlog': None, 'log': None}
+if os.getenv("IS_STREAMLIT_ENABLED") == "true":
+    model_structure['Streamlit'] = {'streamlit': None}
 
 
 processAdminSite.register_model_structure(model_structure)
