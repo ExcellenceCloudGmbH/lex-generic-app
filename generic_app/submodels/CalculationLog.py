@@ -65,7 +65,7 @@ class CalculationLog(models.Model):
             calculation_id = getattr(obj, "calculation_id", "test_id")
 
         calc_log = CalculationLog(timestamp=datetime.now(), method=str(trace_objects),
-                                  calculation_record=calculation_record, message=message, calculationId=calculation_id,
+                                  calculation_record=calculation_record if calculation_record else "init_upload", message=message, calculationId=calculation_id,
                                   message_type=message_type,
                                   trigger_name=trigger_name, is_notification=is_notification)
         calc_log.save()
