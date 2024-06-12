@@ -52,13 +52,13 @@ class CalculationLog(models.Model):
         calculation_record = cls.get_trace_objects()["first_model_info"]
 
         if current_task and os.getenv("CELERY_ACTIVE"):
-            obj, created = CalculationIDs.objects.get_or_create(calculation_record=calculation_record,
+            obj, created = CalculationIDs.objects.get_or_create(calculation_record=calculation_record if calculation_record else "init_upload",
                                                                 calculation_id=str(current_task.request.id),
                                                                 defaults={
                                                                     'context_id': getattr(CalculationIDs.objects.filter(calculation_id=str(current_task.request.id)).first(), "context_id", "test_id")})
             calculation_id = getattr(obj, "calculation_id", "test_id")
         else:
-            obj, created = CalculationIDs.objects.get_or_create(calculation_record=calculation_record,
+            obj, created = CalculationIDs.objects.get_or_create(calculation_record=calculation_record if calculation_record else "init_upload",
                                                                 context_id=context_id.get() if context_id.get() else "test_id",
                                                                 defaults={
                                                                     'calculation_id': getattr(CalculationIDs.objects.filter(context_id=context_id.get()).first(), "calculation_id", "test_id")})
