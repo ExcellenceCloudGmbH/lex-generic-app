@@ -11,7 +11,7 @@ from django.db.models import Model, BooleanField
 
 from generic_app.rest_api.signals import update_calculation_status
 from generic_app.submodels.CalculationIDs import CalculationIDs
-from ProcessAdminRestApi.context import context_id
+from generic_app.rest_api.context import context_id
 
 
 def custom_shared_task(function):
