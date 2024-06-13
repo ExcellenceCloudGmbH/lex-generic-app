@@ -28,12 +28,12 @@ jobs:
 
       - name: Update requirements.txt in lex-app
         run: |
-          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*|generic_app @ git+https://github.com/LundIT/lex-generic-app@${{ steps.version_tag.outputs.version }}|" requirements.txt
+          echo "Before sed:"
+          cat requirements.txt
+          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*'|generic_app @ git+https://github.com/LundIT/lex-generic-app@${{ steps.version_tag.outputs.version }}|" requirements.txt
+          echo "After sed:"
+          cat requirements.txt
         shell: bash
-        working-directory: ./lex-app
-
-      - name: Print requirements.txt
-        run: cat requirements.txt
         working-directory: ./lex-app
 
       - name: Check for changes
