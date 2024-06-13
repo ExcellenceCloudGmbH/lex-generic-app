@@ -17,10 +17,18 @@ jobs:
           token: ${{ secrets.PAT }}
           path: 'lex-app'
 
+      - name: Extract Version Tag
+        id: version_tag
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          VERSION_TAG="${GITHUB_REF#refs/tags/}"
+          echo "VERSION_TAG=$VERSION_TAG"
+          echo "::set-output name=version::$VERSION_TAG"
+        shell: bash
+
       - name: Update requirements.txt in lex-app
         run: |
-          VERSION_TAG="${GITHUB_REF#refs/tags/}"
-          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*|generic_app @ git+https://github.com/LundIT/lex-generic-app@$VERSION_TAG|" requirements.txt
+          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*|generic_app @ git+https://github.com/LundIT/lex-generic-app@${{ steps.version_tag.outputs.version }}|" requirements.txt
         shell: bash
         working-directory: ./lex-app
 
@@ -32,10 +40,10 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git checkout -b update-dependency-${VERSION_TAG}
+          git checkout -b update-dependency-${{ steps.version_tag.outputs.version }}
           git add requirements.txt
-          git commit -m "Update generic_app dependency to ${VERSION_TAG}"
-          git push origin update-dependency-${VERSION_TAG}
+          git commit -m "Update generic_app dependency to ${{ steps.version_tag.outputs.version }}"
+          git push origin update-dependency-${{ steps.version_tag.outputs.version }}
         working-directory: ./lex-app
         env:
           REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
@@ -44,9 +52,9 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          commit-message: "Update generic_app dependency to ${VERSION_TAG}"
-          branch: "update-dependency-${VERSION_TAG}"
-          title: "Update generic_app to ${VERSION_TAG}"
+          commit-message: "Update generic_app dependency to ${{ steps.version_tag.outputs.version }}"
+          branch: "update-dependency-${{ steps.version_tag.outputs.version }}"
+          title: "Update generic_app to ${{ steps.version_tag.outputs.version }}"
           body: "Automated update to the latest version of generic_app"
           base: 'main'
           path: './lex-app'
