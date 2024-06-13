@@ -20,7 +20,7 @@ jobs:
       - name: Update requirements.txt in lex-app
         run: |
           VERSION_TAG="${GITHUB_REF#refs/tags/}"
-          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*|generic_app @ git+https://github.com/LundIT/lex-generic-app@$VERSION_TAG|" lex-app/requirements.txt
+          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*|generic_app @ git+https://github.com/LundIT/lex-generic-app@$VERSION_TAG|" requirements.txt
         shell: bash
         working-directory: ./lex-app
 
