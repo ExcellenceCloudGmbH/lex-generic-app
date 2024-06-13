@@ -32,6 +32,10 @@ jobs:
         shell: bash
         working-directory: ./lex-app
 
+      - name: Print requirements.txt
+        run: cat requirements.txt
+        working-directory: ./lex-app
+
       - name: Check for changes
         id: check_changes
         run: |
