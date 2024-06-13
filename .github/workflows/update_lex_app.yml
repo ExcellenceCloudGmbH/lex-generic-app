@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "Before sed:"
           cat requirements.txt
-          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*'|generic_app @ git+https://github.com/LundIT/lex-generic-app@${{ steps.version_tag.outputs.version }}|" requirements.txt
+          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@\([^@]*\)|generic_app @ git+https://github.com/LundIT/lex-generic-app@${{ steps.version_tag.outputs.version }}|" requirements.txt
           echo "After sed:"
           cat requirements.txt
         shell: bash
