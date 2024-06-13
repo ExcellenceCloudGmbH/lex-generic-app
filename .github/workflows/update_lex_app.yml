@@ -39,16 +39,6 @@ jobs:
           git config user.email 'github-actions[bot]'
         working-directory: ./lex-app
 
-      - name: Commit and Push Changes
-        run: |
-          git checkout -b update-dependency-${{ steps.version_tag.outputs.version }}
-          git add requirements.txt
-          git commit -m "Update generic_app dependency to ${{ steps.version_tag.outputs.version }}"
-          git push origin update-dependency-${{ steps.version_tag.outputs.version }}
-        working-directory: ./lex-app
-        env:
-          REPO_ACCESS_TOKEN: ${{ secrets.PAT }}
-
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
