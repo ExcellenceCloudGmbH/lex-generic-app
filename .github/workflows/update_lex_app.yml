@@ -28,33 +28,17 @@ jobs:
 
       - name: Update requirements.txt in lex-app
         run: |
-          echo "Before sed:"
-          cat requirements.txt
           sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app|generic_app @ git+https://github.com/LundIT/lex-generic-app@${{ steps.version_tag.outputs.version }}|" requirements.txt
-          echo "After sed:"
-          cat requirements.txt
         shell: bash
         working-directory: ./lex-app
 
-      - name: Check for changes
-        id: check_changes
-        run: |
-          if git diff --exit-code; then
-            echo "::set-output name=changed::false"
-          else
-            echo "::set-output name=changed::true"
-          fi
-        working-directory: ./lex-app
-
       - name: Setup Git Config
-        if: steps.check_changes.outputs.changed == 'true'
         run: |
           git config user.name '41898282+github-actions[bot]@users.noreply.github.com'
           git config user.email 'github-actions[bot]'
         working-directory: ./lex-app
 
       - name: Commit and Push Changes
-        if: steps.check_changes.outputs.changed == 'true'
         run: |
           git checkout -b update-dependency-${{ steps.version_tag.outputs.version }}
           git add requirements.txt
@@ -65,14 +49,17 @@ jobs:
           REPO_ACCESS_TOKEN: ${{ secrets.PAT }}
 
       - name: Create Pull Request
-        if: steps.check_changes.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PAT }}
           commit-message: "Update generic_app dependency to ${{ steps.version_tag.outputs.version }}"
-          branch: "update-dependency-${{ steps.version_tag.outputs.version }}"
+          branch: "update-dependency-${{ steps.version_tag.outputs.version }}"  # This is the branch where changes are committed
           title: "Update generic_app to ${{ steps.version_tag.outputs.version }}"
-          body: "Automated update to the latest version of generic_app"
+          body: |
+            This is an automated pull request to update the lex-generic-app dependency to the latest version.
+            
+            **Changes:**
+            - Updated `lex-generic-app` to version `${{ steps.version_tag.outputs.version }}`.
           base: 'main'
           path: './lex-app'
-          repo: 'LundIT/lex-app'
+          
