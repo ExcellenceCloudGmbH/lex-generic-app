@@ -1,0 +1,53 @@
+name: Update Lex-App on New Tag
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  update-dependency-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout lex-app
+        uses: actions/checkout@v3
+        with:
+          repository: 'LundIT/lex-app'
+          token: ${{ secrets.PAT }}
+          path: 'lex-app'
+
+      - name: Update requirements.txt in lex-app
+        run: |
+          VERSION_TAG="${GITHUB_REF#refs/tags/}"
+          sed -i "s|generic_app @ git+https://github.com/LundIT/lex-generic-app@.*|generic_app @ git+https://github.com/LundIT/lex-generic-app@$VERSION_TAG|" lex-app/requirements.txt
+        shell: bash
+        working-directory: ./lex-app
+
+      - name: Setup Git Config
+        run: |
+          git config user.name '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.email 'github-actions[bot]'
+        working-directory: ./lex-app
+
+      - name: Commit and Push Changes
+        run: |
+          git checkout -b update-dependency-${VERSION_TAG}
+          git add requirements.txt
+          git commit -m "Update generic_app dependency to ${VERSION_TAG}"
+          git push origin update-dependency-${VERSION_TAG}
+        working-directory: ./lex-app
+        env:
+          REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          commit-message: "Update generic_app dependency to ${VERSION_TAG}"
+          branch: "update-dependency-${VERSION_TAG}"
+          title: "Update generic_app to ${VERSION_TAG}"
+          body: "Automated update to the latest version of generic_app"
+          base: 'main'
+          path: './lex-app'
+          repo: 'LundIT/lex-app'
