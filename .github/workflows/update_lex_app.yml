@@ -32,13 +32,25 @@ jobs:
         shell: bash
         working-directory: ./lex-app
 
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --exit-code; then
+            echo "::set-output name=changed::false"
+          else
+            echo "::set-output name=changed::true"
+          fi
+        working-directory: ./lex-app
+
       - name: Setup Git Config
+        if: steps.check_changes.outputs.changed == 'true'
         run: |
           git config user.name '41898282+github-actions[bot]@users.noreply.github.com'
           git config user.email 'github-actions[bot]'
         working-directory: ./lex-app
 
       - name: Commit and Push Changes
+        if: steps.check_changes.outputs.changed == 'true'
         run: |
           git checkout -b update-dependency-${{ steps.version_tag.outputs.version }}
           git add requirements.txt
@@ -46,12 +58,13 @@ jobs:
           git push origin update-dependency-${{ steps.version_tag.outputs.version }}
         working-directory: ./lex-app
         env:
-          REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          REPO_ACCESS_TOKEN: ${{ secrets.PAT }}
 
       - name: Create Pull Request
+        if: steps.check_changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v4
         with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.PAT }}
           commit-message: "Update generic_app dependency to ${{ steps.version_tag.outputs.version }}"
           branch: "update-dependency-${{ steps.version_tag.outputs.version }}"
           title: "Update generic_app to ${{ steps.version_tag.outputs.version }}"
