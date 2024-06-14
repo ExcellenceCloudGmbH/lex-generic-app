@@ -8,6 +8,7 @@ from generic_app.rest_api.auth import TokenObtainPairWithUserView
 from generic_app.rest_api.model_collection.model_collection import ModelCollection
 from generic_app.generic_models.calculated_model import CalculatedModelMixin
 from generic_app.generic_models.model_process_admin import ModelProcessAdmin
+from generic_app.rest_api.views.calculations.CleanCalculations import CleanCalculations
 from generic_app.rest_api.views.file_operations.FileDownload import FileDownloadView
 from generic_app.rest_api.views.file_operations.ModelExport import ModelExportView
 from generic_app.rest_api.views.sharepoint.SharePointFileDownload import SharePointFileDownload
@@ -154,6 +155,8 @@ class ProcessAdminSite:
             path('api/widget_structure', Widgets.as_view(), name='widget-structure'),
             path('api/init-calculation-logs', InitCalculationLogs.as_view(),
                  name='init-calculation-logs'),
+            path('api/clean-calculations', CleanCalculations.as_view(),
+                 name='clean-calculations'),
         ]
 
         url_patterns_for_model_info = [
