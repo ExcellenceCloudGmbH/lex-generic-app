@@ -15,9 +15,13 @@ class CleanCalculations(APIView):
             # Parse JSON and extract the model name and record ID
             model_class = apps.get_model(repo_name, entry['model'])
 
-            obj = model_class.objects.get(pk=entry['record_id'])
+            try:
+                obj = model_class.objects.get(pk=entry['record_id'])
 
-            if hasattr(obj, 'calculate') and not obj.calculate:
+                if hasattr(obj, 'calculate') and not obj.calculate:
+                    will_be_cleaned.append(f"{entry['model']}_{entry['record_id']}")
+
+            except Exception as e:
                 will_be_cleaned.append(f"{entry['model']}_{entry['record_id']}")
 
         return JsonResponse({"records": will_be_cleaned})
