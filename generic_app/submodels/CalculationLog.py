@@ -99,7 +99,8 @@ class CalculationLog(models.Model):
                     if model_verbose_name and record_id:
                         first_model_info = f"{model_verbose_name}_{record_id}"
                 trace_objects.append((trimmed_filename, methodname, lineno, str(tempobject)))
-                trace_objects_class_list.append(tempobject._meta.model_name)
+                if hasattr(tempobject, "_meta"):
+                    trace_objects_class_list.append(tempobject._meta.model_name)
         trace_objects.reverse()
 
         result = {
