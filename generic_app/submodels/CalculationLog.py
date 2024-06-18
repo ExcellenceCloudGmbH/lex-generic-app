@@ -10,6 +10,7 @@ from generic_app.rest_api.context import context_id
 from generic_app import models
 import inspect
 from django.core.cache import cache
+from lex.lex_app import settings
 
 from generic_app.submodels.CalculationIDs import CalculationIDs
 
@@ -90,7 +91,7 @@ class CalculationLog(models.Model):
             filename, methodname, lineno = stack[-(i + 1)].filename, stack[-(i + 1)].name, stack[-(i + 1)].lineno
             i += 1
             currentframe = currentframe.f_back
-            if f"generic_app{os.sep}submodels" in filename and not "CalculationLog" in filename:
+            if f"{settings.repo_name}" in filename and not "CalculationLog" in filename:
                 trimmed_filename = filename.split(os.sep)[-1].split(".")[0]
                 if tempobject and not first_model_info:
                     model_verbose_name = tempobject._meta.model_name
