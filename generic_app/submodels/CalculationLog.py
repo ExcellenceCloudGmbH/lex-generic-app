@@ -93,7 +93,7 @@ class CalculationLog(models.Model):
             currentframe = currentframe.f_back
             if f"{settings.repo_name}" in filename and not "CalculationLog" in filename:
                 trimmed_filename = filename.split(os.sep)[-1].split(".")[0]
-                if tempobject and not first_model_info:
+                if tempobject and hasattr(tempobject, "_meta") and not first_model_info:
                     model_verbose_name = tempobject._meta.model_name
                     record_id = getattr(tempobject, 'id', None)
                     if model_verbose_name and record_id:
