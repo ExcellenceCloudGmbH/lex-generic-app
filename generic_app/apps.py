@@ -93,4 +93,4 @@ def running_in_uvicorn():
     """
     Check if the application is running in Uvicorn context.
     """
-    return sys.argv[-1:] == ["lex_app.asgi:application"]
+    return sys.argv[-1:] == ["lex_app.asgi:application"] and os.getenv("CALLED_FROM_START_COMMAND")
