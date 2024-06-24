@@ -10,9 +10,6 @@ class UpdateCalculationStatusConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(f'update_calculation_status', self.channel_name)
-        await self.send(text_data=json.dumps({
-            'status': "Closed"
-        }))
         await super().disconnect(close_code)
 
     async def calculation_is_completed(self, event):

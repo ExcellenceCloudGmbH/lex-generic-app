@@ -7,9 +7,6 @@ class BackendHealthConsumer(AsyncWebsocketConsumer):
         await self.accept()
         self.active_consumers.add(self)
     async def disconnect(self, close_code):
-        await self.send(text_data=json.dumps({
-            'status': "Closed"
-        }))
         await super().disconnect(close_code)
 
     async def receive(self, text_data):

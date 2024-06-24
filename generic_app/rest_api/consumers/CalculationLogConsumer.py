@@ -14,9 +14,6 @@ class CalculationLogConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(f'{self.calculation_record}', self.channel_name)
-        await self.send(text_data=json.dumps({
-            'status': "Closed"
-        }))
         await super().disconnect(close_code)
 
     async def calculation_log_real_time(self, event):
