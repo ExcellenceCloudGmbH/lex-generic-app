@@ -12,6 +12,8 @@ from unittest import TestCase
 import json
 from generic_app.models import *
 from pathlib import Path
+from lex.lex_app import settings
+from django.apps import apps
 
 class ProcessAdminTestCase(TestCase):
 
@@ -82,8 +84,12 @@ class ProcessAdminTestCase(TestCase):
             elif action == 'delete':
                 klass.objects.filter(**object['filter_parameters']).delete()
 
-    def setUp(self, generic_app_models) -> None:
+    def setUp(self) -> None:
         from datetime import datetime
+
+        generic_app_models = {f"{model.__name__}": model for model in
+                              set(apps.get_app_config(settings.repo_name).models.values())}
+
         self.t0 = datetime.now()
         self.tagged_objects = {}
         test_data = self.get_test_data()

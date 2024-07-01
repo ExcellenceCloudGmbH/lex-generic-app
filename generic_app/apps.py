@@ -22,7 +22,7 @@ def load_data(test, generic_app_models):
             test.test_path = auth_settings.initial_data_load
             print("All models are empty: Starting Initial Data Fill")
             if os.getenv("STORAGE_TYPE", "LEGACY") == "LEGACY":
-                asyncio.run(sync_to_async(test.setUp)(generic_app_models))
+                asyncio.run(sync_to_async(test.setUp)())
             else:
                 if os.getenv("CELERY_ACTIVE"):
                     test.setUpCloudStorage(generic_app_models)
@@ -46,7 +46,7 @@ class GenericAppConfig(AppConfig):
 
     def ready(self):
         generic_app_models = {f"{model.__name__}": model for model in
-                              set(list(apps.get_app_config('generic_app').models.values())
+                              set(list(apps.get_app_config(repo_name).models.values())
                                   + list(apps.get_app_config(repo_name).models.values()))}
         nest_asyncio.apply()
         asyncio.run(self.async_ready(generic_app_models))
