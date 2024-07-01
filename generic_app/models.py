@@ -28,6 +28,8 @@ from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 
 from lex_app.ProcessAdminSettings import processAdminSite, adminSite
+from asgiref.sync import sync_to_async
+import nest_asyncio
 
 print("Importing sys")
 import sys
@@ -154,18 +156,18 @@ while i < len(files):
 
                     # Below part should be updated with the new use case dpag pip
 
-                    # if issubclass(imported_class, ConditionalUpdateMixin):
-                    #
-                    #     if not any(cmd in sys.argv for cmd in ["makemigrations", "migrate", "run_dpag.py"]) and not sys.argv[1:2] == ['test']:
-                    #         @sync_to_async
-                    #         def reset_instances_with_aborted_calculations():
-                    #             if not os.getenv("CELERY_ACTIVE"):
-                    #                 aborted_calc_instances = imported_class.objects.filter(calculate=True)
-                    #                 aborted_calc_instances.update(calculate=False)
-                    #
-                    #         nest_asyncio.apply()
-                    #         loop = asyncio.get_event_loop()
-                    #         loop.run_until_complete(reset_instances_with_aborted_calculations())
+                    if issubclass(imported_class, ConditionalUpdateMixin):
+
+                        if os.environ.setdefault("CALLED_FROM_START_COMMAND"):
+                            @sync_to_async
+                            def reset_instances_with_aborted_calculations():
+                                if not os.getenv("CELERY_ACTIVE"):
+                                    aborted_calc_instances = imported_class.objects.filter(calculate=True)
+                                    aborted_calc_instances.update(calculate=False)
+
+                            nest_asyncio.apply()
+                            loop = asyncio.get_event_loop()
+                            loop.run_until_complete(reset_instances_with_aborted_calculations())
                     #
                     # if not model_structure_defined:
                     #    insert_model_to_structure(model_structure, subfolders, imported_class._meta.model_name)
