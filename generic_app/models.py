@@ -158,7 +158,7 @@ while i < len(files):
 
                     if issubclass(imported_class, ConditionalUpdateMixin):
 
-                        if os.environ.setdefault("CALLED_FROM_START_COMMAND"):
+                        if os.getenv("CALLED_FROM_START_COMMAND"):
                             @sync_to_async
                             def reset_instances_with_aborted_calculations():
                                 if not os.getenv("CELERY_ACTIVE"):
