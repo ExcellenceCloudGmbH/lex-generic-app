@@ -34,6 +34,20 @@ DEFAULT_TYPE_NAME = 'string'
 
 
 def create_field_info(field):
+    """
+    Create a dictionary containing information about a Django model field.
+
+    Parameters
+    ----------
+    field : django.db.models.Field
+        The Django model field to extract information from.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the field's name, readable name, type, editability, 
+        requirement status, default value, and any additional information.
+    """
     default_value = None
     if field.get_default() is not None:
         default_value = field.get_default()
@@ -57,10 +71,35 @@ def create_field_info(field):
 
 
 class Fields(APIView):
+    """
+    API view to retrieve field information for a given model.
+
+    Attributes
+    ----------
+    http_method_names : list of str
+        Allowed HTTP methods for this view.
+    permission_classes : list
+        List of permission classes that are required to access this view.
+    """
     http_method_names = ['get']
     permission_classes = [HasAPIKey | IsAuthenticated, UserPermission]
 
     def get(self, *args, **kwargs):
+        """
+        Handle GET requests to retrieve field information for a model.
+
+        Parameters
+        ----------
+        *args : tuple
+            Variable length argument list.
+        **kwargs : dict
+            Arbitrary keyword arguments, expected to contain 'model_container' with the model class.
+
+        Returns
+        -------
+        rest_framework.response.Response
+            A response object containing the field information.
+        """
         model = kwargs['model_container'].model_class
         fields = model._meta.fields
         field_info = {'fields': [

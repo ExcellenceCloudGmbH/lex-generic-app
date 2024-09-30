@@ -12,9 +12,39 @@ from generic_app.submodels.UserChangeLog import UserChangeLog
 
 
 class InitCalculationLogs(APIView):
+    """
+    API view to initialize and fetch calculation logs.
+
+    This view handles GET requests to fetch logs from UserChangeLog and CalculationLog
+    based on the provided calculation record and calculation ID.
+
+    Attributes
+    ----------
+    http_method_names : list of str
+        Allowed HTTP methods for this view.
+    permission_classes : list
+        Permissions required to access this view.
+    """
     http_method_names = ['get']
     permission_classes = [HasAPIKey | IsAuthenticated]
     def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests to fetch calculation logs.
+
+        Parameters
+        ----------
+        request : HttpRequest
+            The HTTP request object.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        JsonResponse
+            A JSON response containing the fetched logs.
+        """
         calculation_record = request.query_params['calculation_record']
         calculation_id = request.query_params['calculation_id']
 

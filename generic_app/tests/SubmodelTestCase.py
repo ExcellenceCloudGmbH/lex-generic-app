@@ -7,6 +7,9 @@ from secrets import randbelow
 
 
 class TestType(Enum):
+    """
+    Enumeration for different types of tests that can be performed on DataFrame columns.
+    """
     EXACT = 'Exact'
     DUPLICATE = 'Duplicate'
     RANDOM = 'Random'
@@ -14,6 +17,24 @@ class TestType(Enum):
 
 
 def compare_dfs(df_list, dic, column_names_check=False, format_check=False):
+    """
+    Compare two DataFrames based on specified criteria.
+
+    Parameters
+    ----------
+    df_list : list of pd.DataFrame
+        List containing the two DataFrames to be compared.
+    dic : dict
+        Dictionary specifying the comparisons to be made. Keys are column names, and values are TestType or dict.
+    column_names_check : bool, optional
+        If True, compare the column names of both DataFrames.
+    format_check : bool, optional
+        If True, compare the data types of columns of both DataFrames.
+
+    Returns
+    -------
+    None
+    """
     # df_list should include the two dataframes to be compared, data type: List of dataframes
     # dic should include the comparisons to be made, data type: Dictionary of list of strings
     # column_names_check (optional): Defines whether the column names of both dfs should be compared, data type: Boolean
@@ -93,6 +114,20 @@ def compare_dfs(df_list, dic, column_names_check=False, format_check=False):
 
 
 def check_number_of_lines(df1, df2):
+    """
+    Check if two DataFrames have the same number of rows.
+
+    Parameters
+    ----------
+    df1 : pd.DataFrame
+        The first DataFrame.
+    df2 : pd.DataFrame
+        The second DataFrame.
+
+    Returns
+    -------
+    None
+    """
     rows_df1 = len(df1.axes[0])
     rows_df2 = len(df2.axes[0])
     if rows_df1 == rows_df2:
@@ -102,6 +137,19 @@ def check_number_of_lines(df1, df2):
 
 
 def get_dtypes_in_column(series):
+    """
+    Get the data types present in a pandas Series.
+
+    Parameters
+    ----------
+    series : pd.Series
+        The Series for which to determine data types.
+
+    Returns
+    -------
+    str
+        The data type if consistent, otherwise 'inconsistent typed'.
+    """
     dtypes_list = []
     for entry in series:
         if isinstance(entry, float):
@@ -120,6 +168,26 @@ def get_dtypes_in_column(series):
 
 
 def check_values_test(df1, df2, col_name, accuracy, action):
+    """
+    Perform a specific test on the values of a column in two DataFrames.
+
+    Parameters
+    ----------
+    df1 : pd.DataFrame
+        The first DataFrame.
+    df2 : pd.DataFrame
+        The second DataFrame.
+    col_name : str
+        The name of the column to be tested.
+    accuracy : int or None
+        The number of decimal places to consider for float comparisons.
+    action : TestType
+        The type of test to perform.
+
+    Returns
+    -------
+    None
+    """
     series_df1 = df1[col_name]
     series_df2 = df2[col_name]
     dtype_series_df1 = get_dtypes_in_column(series_df1)
@@ -198,6 +266,28 @@ def check_values_test(df1, df2, col_name, accuracy, action):
 
 
 def check_values(col_name, df1, df2, action, accuracy=None, grouped_by=None):
+    """
+    Check values in a column of two DataFrames, optionally grouped by another column.
+
+    Parameters
+    ----------
+    col_name : str
+        The name of the column to be checked.
+    df1 : pd.DataFrame
+        The first DataFrame.
+    df2 : pd.DataFrame
+        The second DataFrame.
+    action : TestType
+        The type of test to perform.
+    accuracy : int or None, optional
+        The number of decimal places to consider for float comparisons.
+    grouped_by : str or None, optional
+        The column by which to group the DataFrames before checking values.
+
+    Returns
+    -------
+    None
+    """
     if grouped_by:
         distinct_values = df1[grouped_by].unique()
         for val in distinct_values:
@@ -212,6 +302,20 @@ def check_values(col_name, df1, df2, action, accuracy=None, grouped_by=None):
 
 
 def check_format(df1, df2):
+    """
+    Check if the data types of columns in two DataFrames are the same.
+
+    Parameters
+    ----------
+    df1 : pd.DataFrame
+        The first DataFrame.
+    df2 : pd.DataFrame
+        The second DataFrame.
+
+    Returns
+    -------
+    None
+    """
     count_total = 0
     count_errors = 0
     for column in df1.columns:

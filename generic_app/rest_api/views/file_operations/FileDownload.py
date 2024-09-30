@@ -10,11 +10,40 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 
 class FileDownloadView(APIView):
+    """
+    API view for downloading files.
+
+    Attributes
+    ----------
+    model_collection : None
+        Placeholder for model collection, not used in this implementation.
+    http_method_names : list of str
+        Allowed HTTP methods for this view.
+    permission_classes : list
+        Permissions required to access this view.
+    """
     model_collection = None
     http_method_names = ['get']
     permission_classes = [HasAPIKey | IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests to download a file.
+
+        Parameters
+        ----------
+        request : HttpRequest
+            The HTTP request object.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        FileResponse or JsonResponse
+            A response containing the file to be downloaded or a JSON response with the download URL.
+        """
         model = kwargs['model_container'].model_class
         shrp_ctx = SharePointContext()
         instance = model.objects.filter(pk=request.query_params['pk'])[0]

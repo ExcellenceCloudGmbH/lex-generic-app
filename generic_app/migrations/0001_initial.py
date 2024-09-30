@@ -5,6 +5,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """
+    Handles the migration for creating and modifying database tables.
+
+    Attributes
+    ----------
+    initial : bool
+        Indicates if this is the initial migration.
+    dependencies : list
+        List of migrations this migration depends on.
+    operations : list
+        List of operations to be applied in this migration.
+    """
 
     initial = True
 

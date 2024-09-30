@@ -18,7 +18,43 @@ user_email = None
 
 
 class CreateOrUpdate(ModelEntryProviderMixin, DestroyOneWithPayloadMixin, RetrieveUpdateDestroyAPIView, CreateAPIView):
+    """
+    A view that provides default implementations for creating, updating, and destroying model instances.
+
+    This class combines several mixins to handle the creation or update of a model instance,
+    and logs the changes made by the user.
+
+    Methods
+    -------
+    update(request, *args, **kwargs)
+        Handles the update or creation of a model instance, logs the changes, and manages exceptions.
+    """
     def update(self, request, *args, **kwargs):
+        """
+        Handle the update or creation of a model instance.
+
+        This method logs the start of the update process, attempts to update or create the instance,
+        logs any exceptions that occur, and logs the successful completion of the update.
+
+        Parameters
+        ----------
+        request : Request
+            The request object containing the data for the update or creation.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        Response
+            The response object containing the result of the update or creation.
+
+        Raises
+        ------
+        APIException
+            If an exception occurs during the update or creation process.
+        """
         from generic_app.submodels.UserChangeLog import UserChangeLog
         from generic_app.models import update_handler
         model_container = self.kwargs['model_container']

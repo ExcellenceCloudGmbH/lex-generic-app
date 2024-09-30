@@ -20,8 +20,37 @@ user_email = None
 
 
 class OneModelEntry(ModelEntryProviderMixin, DestroyOneWithPayloadMixin, RetrieveUpdateDestroyAPIView, CreateAPIView):
+    """
+    A view that provides `retrieve`, `update`, `destroy`, and `create` actions for a single model entry.
+
+    Inherits from multiple mixins and generic views to handle model entry operations with additional logging and transaction management.
+    """
 
     def create(self, request, *args, **kwargs):
+        """
+        Handle the creation of a model entry.
+
+        This method logs the creation process, manages transactions, and handles exceptions.
+
+        Parameters
+        ----------
+        request : Request
+            The request object containing the data for the creation.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        Response
+            The response object containing the created entry data.
+
+        Raises
+        ------
+        APIException
+            If an error occurs during the creation process.
+        """
         from generic_app.submodels.UserChangeLog import UserChangeLog
         global user_name
         global user_email
@@ -53,6 +82,30 @@ class OneModelEntry(ModelEntryProviderMixin, DestroyOneWithPayloadMixin, Retriev
             return response
 
     def update(self, request, *args, **kwargs):
+        """
+        Handle the update of a model entry.
+
+        This method logs the update process, manages transactions, handles exceptions, and supports conditional calculations.
+
+        Parameters
+        ----------
+        request : Request
+            The request object containing the data for the update.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        Response
+            The response object containing the updated entry data.
+
+        Raises
+        ------
+        APIException
+            If an error occurs during the update process.
+        """
         from generic_app.submodels.UserChangeLog import UserChangeLog
         from generic_app.submodels.CalculationIDs import CalculationIDs
         from generic_app.models import update_handler

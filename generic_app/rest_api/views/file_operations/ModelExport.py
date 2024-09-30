@@ -13,6 +13,24 @@ from generic_app.rest_api.views.model_entries.filter_backends import PrimaryKeyL
 
 
 class ModelExportView(GenericAPIView):
+    """
+    A view for exporting model data to an Excel file.
+
+    This view handles POST requests to export data from a specified model
+    container to an Excel file. The data can be filtered based on user
+    permissions and specified filters.
+
+    Attributes
+    ----------
+    filter_backends : list
+        List of filter backends to be applied to the queryset.
+    model_collection : None
+        Placeholder for the model collection.
+    http_method_names : list
+        List of allowed HTTP methods.
+    permission_classes : list
+        List of permission classes to be applied to the view.
+    """
     filter_backends = [UserReadRestrictionFilterBackend, PrimaryKeyListFilterBackend, ForeignKeyFilterBackend]
     model_collection = None
     http_method_names = ['post']
@@ -21,6 +39,27 @@ class ModelExportView(GenericAPIView):
 
 
     def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests to export model data.
+
+        This method processes the request to export data from the specified
+        model container. It applies necessary filters and converts the data
+        to an Excel file.
+
+        Parameters
+        ----------
+        request : HttpRequest
+            The request object.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        FileResponse
+            A response containing the Excel file.
+        """
         model_container = kwargs['model_container']
         model = model_container.model_class
         queryset = ForeignKeyFilterBackend().filter_queryset(request, model.objects.all(), None)

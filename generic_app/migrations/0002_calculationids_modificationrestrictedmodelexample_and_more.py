@@ -4,6 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """
+    A class representing a database migration.
+
+    This migration includes the creation of two new models and the addition of fields to existing models.
+
+    Attributes
+    ----------
+    dependencies : list
+        A list of migration dependencies.
+    operations : list
+        A list of operations to be applied during the migration.
+    """
 
     dependencies = [
         ('generic_app', '0001_initial'),

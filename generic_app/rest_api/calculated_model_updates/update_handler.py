@@ -3,32 +3,88 @@ from generic_app.generic_models.process_admin_model import DependencyAnalysisMix
 
 
 def calc_and_save(entry):
+    """
+    Calculate and save the given entry.
+
+    Parameters
+    ----------
+    entry : object
+        The entry to be calculated and saved.
+    """
     entry.calculate()
     entry.save()
 
 
 class CalculatedModelUpdateHandler:
+    """
+    Handler for updating calculated models.
+
+    This class manages the collection of models and the behavior to execute
+    after saving a model.
+
+    Attributes
+    ----------
+    instance : CalculatedModelUpdateHandler
+        Singleton instance of the handler.
+    model_collection : object
+        Collection of models to be managed.
+    post_save_behaviour : callable
+        Function to be called after saving a model.
+    """
     instance = None
 
     def __init__(self):
+        """
+        Initialize the handler with default settings.
+        """
         # TODO: Change file to rely on 'model_graph_store.py' instead
         self.model_collection = None
         self.post_save_behaviour = calc_and_save
         CalculatedModelUpdateHandler.instance = self
 
     def set_model_collection(self, model_collection):
+        """
+        Set the collection of models to be managed.
+
+        Parameters
+        ----------
+        model_collection : object
+            The collection of models.
+        """
         self.model_collection = model_collection
 
     @staticmethod
     def set_post_save_behaviour(func):
+        """
+        Set the behavior to execute after saving a model.
+
+        Parameters
+        ----------
+        func : callable
+            The function to be called after saving a model.
+        """
         CalculatedModelUpdateHandler.instance.post_save_behaviour = func
 
     @staticmethod
     def reset_post_save_behaviour():
+        """
+        Reset the post-save behavior to the default `calc_and_save` function.
+        """
         CalculatedModelUpdateHandler.instance.post_save_behaviour = calc_and_save
 
     @staticmethod
     def register_save(updated_entry):
+        """
+        Register the save operation for an updated entry.
+
+        This method updates all entries in calculated models that are dependent
+        on the `updated_entry`.
+
+        Parameters
+        ----------
+        updated_entry : object
+            The entry that has been updated.
+        """
         # TODO: Properly handle this case
         if not issubclass(type(updated_entry), DependencyAnalysisMixin):
             return

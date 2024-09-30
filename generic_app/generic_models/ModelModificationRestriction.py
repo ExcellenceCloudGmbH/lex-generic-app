@@ -20,45 +20,136 @@ class ModelModificationRestriction(ABC):
 
     def can_create_in_general(self, user, violations):
         """
-        determines whether the given user is allowed to create instances of the model in general
+        Determines whether the given user is allowed to create instances of the model in general.
+
+        Parameters
+        ----------
+        user : object
+            The user attempting the action.
+        violations : list
+            A list to which violation messages can be appended.
+
+        Returns
+        -------
+        bool
+            True if the user can create instances in general, False otherwise.
         """
         return True
 
     def can_read_in_general(self, user, violations):
         """
-        determines whether the given user is allowed to read instances of the model in general. If this results in
-        false for a certain user, the user will not see the existence of this model at all
+        Determines whether the given user is allowed to read instances of the model in general. If this results in
+        false for a certain user, the user will not see the existence of this model at all.
+
+        Parameters
+        ----------
+        user : object
+            The user attempting the action.
+        violations : list
+            A list to which violation messages can be appended.
+
+        Returns
+        -------
+        bool
+            True if the user can read instances in general, False otherwise.
         """
         return True
 
     def can_modify_in_general(self, user, violations):
         """
-        determines whether the given user is allowed to update or delete instances of the model in general.
+        Determines whether the given user is allowed to update or delete instances of the model in general.
+
+        Parameters
+        ----------
+        user : object
+            The user attempting the action.
+        violations : list
+            A list to which violation messages can be appended.
+
+        Returns
+        -------
+        bool
+            True if the user can modify instances in general, False otherwise.
         """
         return True
     def can_delete_in_general(self, user, violations):
         """
-        determines whether the given user can modify the given instance.
-        Important: this method is called on the 'old' instance (i.e. before the modification)!
+        Determines whether the given user can delete instances of the model in general.
+
+        Parameters
+        ----------
+        user : object
+            The user attempting the action.
+        violations : list
+            A list to which violation messages can be appended.
+
+        Returns
+        -------
+        bool
+            True if the user can delete instances in general, False otherwise.
         """
         return True
     def can_be_read(self, instance, user, violations):
         """
-        determines whether the given user can read the given instance
+        Determines whether the given user can read the given instance.
+
+        Parameters
+        ----------
+        instance : object
+            The instance being accessed.
+        user : object
+            The user attempting the action.
+        violations : list
+            A list to which violation messages can be appended.
+
+        Returns
+        -------
+        bool
+            True if the user can read the instance, False otherwise.
         """
         return True
 
     def can_be_modified(self, instance, user, violations, request_data):
         """
-        determines whether the given user can modify the given instance.
+        Determines whether the given user can modify the given instance.
         Important: this method is called on the 'old' instance (i.e. before the modification)!
+
+        Parameters
+        ----------
+        instance : object
+            The instance being modified.
+        user : object
+            The user attempting the action.
+        violations : list
+            A list to which violation messages can be appended.
+        request_data : dict
+            The data being used to modify the instance.
+
+        Returns
+        -------
+        bool
+            True if the user can modify the instance, False otherwise.
         """
         return True
 
     def can_be_deleted(self, instance, user, violations):
         """
-        determines whether the given user can modify the given instance.
+        Determines whether the given user can delete the given instance.
         Important: this method is called on the 'old' instance (i.e. before the modification)!
+
+        Parameters
+        ----------
+        instance : object
+            The instance being deleted.
+        user : object
+            The user attempting the action.
+        violations : list
+            A list to which violation messages can be appended.
+
+        Returns
+        -------
+        bool
+            True if the user can delete the instance, False otherwise.
         """
         return True
 

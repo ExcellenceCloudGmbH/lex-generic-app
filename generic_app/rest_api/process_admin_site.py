@@ -37,6 +37,9 @@ class ProcessAdminSite:
     name = 'process_admin_rest_api'
 
     def __init__(self) -> None:
+        """
+        Initialize the ProcessAdminSite with default attributes.
+        """
         super().__init__()
 
         self.registered_models = {}  # Model-classes to ModelProcessAdmin-instances
@@ -51,53 +54,99 @@ class ProcessAdminSite:
         self.model_collection = None
     def register_model_styling(self, model_styling):
         """
-        :param model_styling: dict that contains styling parameters for each model
+        Register model styling parameters.
+
+        Parameters
+        ----------
+        model_styling : dict
+            Dictionary that contains styling parameters for each model.
         """
         self.model_styling = model_styling
 
     def register_global_filter_structure(self, global_filter_structure):
         """
-        :param global_filter_structure: dict that contains information which models are affected by the global filtering
+        Register global filter structure.
+
+        Parameters
+        ----------
+        global_filter_structure : dict
+            Dictionary that contains information on which models are affected by the global filtering.
         """
         self.global_filter_structure = global_filter_structure
 
     def registerHTMLReport(self, name, report):
+        """
+        Register an HTML report.
+
+        Parameters
+        ----------
+        name : str
+            The name of the report.
+        report : object
+            The report object to be registered.
+        """
         self.html_reports[name] = report
 
     def registerProcess(self, name, process):
+        """
+        Register a process.
+
+        Parameters
+        ----------
+        name : str
+            The name of the process.
+        process : object
+            The process object to be registered.
+        """
         self.processes[name] = process
 
     def register_model_structure(self, model_structure):
         """
-        :param model_structure: multiple trees that structure the registered models, i.e. the leaves of the trees
-        must correspond to the model-names, and all other nodes are interpreted as model categories.
-        The roots have a special meaning, i.e. their categorization should be the most general one,
-        and is represented in a special way.
-        E.g.:
-        {
-            'Main_1': {
-                'Sub_1_1': {
-                    'Model_1_1_1': None,
-                    'Model_1_1_2': None
-                }
-            },
-            'Main2': {
-                'Sub_2_1': {
-                    'Model_2_1_1': None,
-                    'Model_2_1_2': None
+        Register model structure.
+
+        Parameters
+        ----------
+        model_structure : dict
+            Multiple trees that structure the registered models. The leaves of the trees must correspond to the model-names,
+            and all other nodes are interpreted as model categories. The roots have a special meaning, i.e., their categorization
+            should be the most general one and is represented in a special way.
+
+            Example
+            -------
+            {
+                'Main_1': {
+                    'Sub_1_1': {
+                        'Model_1_1_1': None,
+                        'Model_1_1_2': None
+                    }
                 },
-                'Sub_2_2': {
-                    'Model_2_2_1': None,
-                    'Model_2_2_2': None
+                'Main2': {
+                    'Sub_2_1': {
+                        'Model_2_1_1': None,
+                        'Model_2_1_2': None
+                    },
+                    'Sub_2_2': {
+                        'Model_2_2_1': None,
+                        'Model_2_2_2': None
+                    }
                 }
             }
-        }
-        Hint: not every model has to be contained in this tree
-        :return:
+
+            Note: Not every model has to be contained in this tree.
         """
         self.model_structure = model_structure
 
     def register(self, model_or_iterable, process_admin=None):
+        """
+        Register a model or iterable of models with an optional process admin.
+
+        Parameters
+        ----------
+        model_or_iterable : ModelBase or iterable
+            The model or iterable of models to be registered.
+        process_admin : ModelProcessAdmin, optional
+            The process admin instance to be associated with the model(s). If not provided, a new instance of ModelProcessAdmin is created.
+        """
         if process_admin is None:
             process_admin = ModelProcessAdmin()
 
@@ -114,12 +163,33 @@ class ProcessAdminSite:
                 post_save.connect(do_post_save, sender=model)
 
     def create_model_objects(self, request):
+        """
+        Create model objects for registered models that are subclasses of CalculatedModelMixin.
+
+        Parameters
+        ----------
+        request : HttpRequest
+            The HTTP request object.
+
+        Returns
+        -------
+        HttpResponse
+            HTTP response indicating the creation status.
+        """
         for model in self.registered_models:
             if issubclass(model, CalculatedModelMixin):
                 model.create()
         return HttpResponse("Created")
 
     def _get_urls(self):
+        """
+        Get the URL patterns for the registered models and views.
+
+        Returns
+        -------
+        list
+            List of URL patterns.
+        """
         register_converter(converters.create_model_converter(self.model_collection), 'model')
 
         urlpatterns = [
@@ -175,6 +245,14 @@ class ProcessAdminSite:
 
     @property
     def urls(self):
+        """
+        Get the URLs for the process admin site.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the URL patterns, the app name, and the instance name.
+        """
         # TODO: Move this to a logically more appropriate place
         # TODO: remove tree induction
         if not self.initialized:

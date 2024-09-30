@@ -10,6 +10,22 @@ from asgiref.sync import async_to_sync
 
 @receiver(post_save)
 def calculation_ids(sender, instance, created, **kwargs):
+    """
+    Handles the post_save signal for CalculationIDs model.
+
+    Sends a message to the 'calculations' channel group with the calculation ID details.
+
+    Parameters
+    ----------
+    sender : Model
+        The model class that sent the signal.
+    instance : Model instance
+        The actual instance being saved.
+    created : bool
+        A boolean indicating whether a new record was created.
+    **kwargs : dict
+        Additional keyword arguments.
+    """
     from generic_app.submodels.CalculationIDs import CalculationIDs
 
     if sender == CalculationIDs:
@@ -30,6 +46,22 @@ def calculation_ids(sender, instance, created, **kwargs):
         async_to_sync(channel_layer.group_send)("calculations", message)
 @receiver(post_save)
 def calculation_logs(sender, instance, created, **kwargs):
+    """
+    Handles the post_save signal for CalculationLog and UserChangeLog models.
+
+    Sends a real-time log message to the channel group associated with the calculation record.
+
+    Parameters
+    ----------
+    sender : Model
+        The model class that sent the signal.
+    instance : Model instance
+        The actual instance being saved.
+    created : bool
+        A boolean indicating whether a new record was created.
+    **kwargs : dict
+        Additional keyword arguments.
+    """
     from generic_app.submodels.CalculationLog import CalculationLog
     from generic_app.submodels.UserChangeLog import UserChangeLog
 
@@ -42,6 +74,22 @@ def calculation_logs(sender, instance, created, **kwargs):
         async_to_sync(channel_layer.group_send)(f'{instance.calculation_record}', message)
 @receiver(post_save)
 def send_calculation_notification(sender, instance, created, **kwargs):
+    """
+    Handles the post_save signal for CalculationLog model to send notifications.
+
+    Sends a notification message to the 'calculation_notification' channel group if the instance has notifications enabled.
+
+    Parameters
+    ----------
+    sender : Model
+        The model class that sent the signal.
+    instance : Model instance
+        The actual instance being saved.
+    created : bool
+        A boolean indicating whether a new record was created.
+    **kwargs : dict
+        Additional keyword arguments.
+    """
     from generic_app.submodels.CalculationLog import CalculationLog
 
     if created and sender == CalculationLog and instance.is_notification:
@@ -58,6 +106,16 @@ def send_calculation_notification(sender, instance, created, **kwargs):
         async_to_sync(channel_layer.group_send)(f'calculation_notification', message)
 
 def update_calculation_status(instance):
+    """
+    Updates the calculation status for instances of ConditionalUpdateMixin.
+
+    Sends a message to the 'update_calculation_status' channel group indicating that the calculation is completed.
+
+    Parameters
+    ----------
+    instance : Model instance
+        The instance whose status is being updated.
+    """
     from generic_app.generic_models.upload_model import ConditionalUpdateMixin
 
     if issubclass(instance.__class__, ConditionalUpdateMixin):
@@ -74,6 +132,23 @@ def update_calculation_status(instance):
         async_to_sync(channel_layer.group_send)(f'update_calculation_status', message)
 
 def get_model_data(calculation_record, calculationId):
+    """
+    Retrieves log messages for a given calculation record and ID.
+
+    Fetches messages from UserChangeLog and CalculationLog models and combines them into a single string.
+
+    Parameters
+    ----------
+    calculation_record : str
+        The calculation record identifier.
+    calculationId : int
+        The calculation ID.
+
+    Returns
+    -------
+    str
+        Combined log messages from UserChangeLog and CalculationLog.
+    """
     from generic_app.submodels.CalculationLog import CalculationLog
     from generic_app.submodels.UserChangeLog import UserChangeLog
 
@@ -92,6 +167,18 @@ def get_model_data(calculation_record, calculationId):
     return "\n".join(messages)
 
 def do_post_save(sender, **kwargs):
+    """
+    Handles custom post-save actions.
+
+    Registers the save event with the CalculatedModelUpdateHandler.
+
+    Parameters
+    ----------
+    sender : Model
+        The model class that sent the signal.
+    **kwargs : dict
+        Additional keyword arguments.
+    """
     CalculatedModelUpdateHandler.register_save(kwargs['instance'])
 
 from django.dispatch import Signal

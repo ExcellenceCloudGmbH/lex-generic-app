@@ -9,10 +9,26 @@ from generic_app.generic_models.fields.XLSX_field import XLSXField
 
 def convert_dfs_in_excel(path, data_frames, sheet_names=None, merge_cells=False, formats={}, index=True):
     """
-    :param path: string to storage location of xlsx file
-    :param data_frames: list of dataframes that will be inserted into an Excel tab each
-    :param sheet_names: list of sheet names corresponding to the data_frames
-    :rtype: None
+    Convert a list of DataFrames into an Excel file with multiple sheets.
+
+    Parameters
+    ----------
+    path : str
+        The storage location of the xlsx file.
+    data_frames : list of pd.DataFrame
+        List of DataFrames that will be inserted into an Excel tab each.
+    sheet_names : list of str, optional
+        List of sheet names corresponding to the data_frames. If None, defaults to ['Sheet'].
+    merge_cells : bool, optional
+        Whether to merge cells in the Excel sheet. Default is False.
+    formats : dict, optional
+        Dictionary of column formats. Default is an empty dictionary.
+    index : bool, optional
+        Whether to include the DataFrame index in the Excel sheet. Default is True.
+
+    Returns
+    -------
+    None
     """
     if sheet_names is None:
         sheet_names = ['Sheet']

@@ -22,6 +22,28 @@ from generic_app.submodels.CalculationIDs import CalculationIDs
 
 
 class Log(models.CalculatedModelMixin, models.Model):
+    """
+    A model for logging calculation processes and their results.
+
+    Attributes
+    ----------
+    modification_restriction : AdminReportsModificationRestriction
+        Restriction for modifying the log.
+    id : AutoField
+        Primary key for the log.
+    group : TextField
+        Group identifier for the log.
+    logfile : XLSXField
+        Path to the log file.
+    input_validation : XLSXField
+        Path to the input validation file.
+    t0 : datetime
+        Timestamp of log creation.
+    defining_fields : list
+        Fields that define the log.
+    filter : list
+        Filter criteria for the log.
+    """
     modification_restriction = AdminReportsModificationRestriction()
     id = models.AutoField(primary_key=True)
     group = models.TextField(null=True)
@@ -36,6 +58,19 @@ class Log(models.CalculatedModelMixin, models.Model):
 
     @staticmethod
     def log(function):
+        """
+        Decorator to automatically trigger the creation of a Log.
+
+        Parameters
+        ----------
+        function : callable
+            The function to be wrapped.
+
+        Returns
+        -------
+        callable
+            The wrapped function.
+        """
         # This function automatically triggers the creation of Log if set as a wrapper for the respective function it should be used in
         # The class in which it should be used needs to have a function
         # get_log_filter(self):
@@ -64,14 +99,48 @@ class Log(models.CalculatedModelMixin, models.Model):
         return wrap
 
     def get_selected_key_list(self, key: str) -> list:
+        """
+        Get a list of selected keys based on the provided key.
+
+        Parameters
+        ----------
+        key : str
+            The key to filter by.
+
+        Returns
+        -------
+        list
+            List of selected keys.
+        """
         if key == 'group':
             return [self.group]
 
     @classmethod
     def get_calculation_id(self, calculation_model):
+        """
+        Get the calculation ID for a given calculation model.
+
+        Parameters
+        ----------
+        calculation_model : Model
+            The calculation model instance.
+
+        Returns
+        -------
+        str
+            The calculation ID.
+        """
         return f"{str(calculation_model._meta.model_name)}-{str(calculation_model.id)}" if calculation_model is not None else "test_id"
 
     def calculate(self, *args):
+        """
+        Perform the calculation and log the results.
+
+        Parameters
+        ----------
+        *args : tuple
+            Additional arguments for the calculation.
+        """
         dfs = []
         ts_dfs = []
         val_dfs = []
@@ -168,6 +237,23 @@ class Log(models.CalculatedModelMixin, models.Model):
 
     @staticmethod
     def preprocess_log_df(logs, message_df, traces):
+        """
+        Preprocess the log DataFrame.
+
+        Parameters
+        ----------
+        logs : DataFrame
+            The logs DataFrame.
+        message_df : DataFrame
+            The message DataFrame.
+        traces : DataFrame
+            The traces DataFrame.
+
+        Returns
+        -------
+        DataFrame
+            The preprocessed logs DataFrame.
+        """
         # Concatenate the logs with the message_df
         logs = pd.concat([logs, message_df], axis=1)
         # Create new column for the level and set it to -1
@@ -182,6 +268,19 @@ class Log(models.CalculatedModelMixin, models.Model):
 
     @staticmethod
     def preprocess_input_val_df(df):
+        """
+        Preprocess the input validation DataFrame.
+
+        Parameters
+        ----------
+        df : DataFrame
+            The input validation DataFrame.
+
+        Returns
+        -------
+        DataFrame
+            The preprocessed input validation DataFrame.
+        """
         # Reset the index
         df.reset_index(drop=True, inplace=True)
         # Drop unneeded columns
@@ -193,6 +292,21 @@ class Log(models.CalculatedModelMixin, models.Model):
 
     @staticmethod
     def update_dfs_for_excel(new_dict, path):
+        """
+        Update the DataFrames for Excel.
+
+        Parameters
+        ----------
+        new_dict : dict
+            Dictionary of new DataFrames.
+        path : str
+            Path to the existing Excel file.
+
+        Returns
+        -------
+        list
+            Updated DataFrames and sheet names.
+        """
         # Read the existing file and save each sheet as a df to a dict, with the sheet name as keyü
         with default_storage.open(path, 'rb') as file:
             dict_old = pd.read_excel(file, sheet_name=None)
@@ -211,6 +325,18 @@ class Log(models.CalculatedModelMixin, models.Model):
         return [dfs, sheet_names]
 
     def set_levels(self, logs, trace_len, n_row):
+        """
+        Set the levels for the logs DataFrame.
+
+        Parameters
+        ----------
+        logs : DataFrame
+            The logs DataFrame.
+        trace_len : int
+            The trace length.
+        n_row : int
+            Number of rows in the logs DataFrame.
+        """
         for index, row in logs.iterrows():
             level = trace_len
             for i in range(n_row, 7, -1):
@@ -220,6 +346,16 @@ class Log(models.CalculatedModelMixin, models.Model):
                     logs['Level'][index] = level
 
     def set_delta(self, logs, trace_len):
+        """
+        Set the time delta for the logs DataFrame.
+
+        Parameters
+        ----------
+        logs : DataFrame
+            The logs DataFrame.
+        trace_len : int
+            The trace length.
+        """
         # If we use the severities START and FINISH from Calculation Log, we can track the time needed to perform a calculation, creation or upload
         # The following method calculates the time difference between the start and responding finish statements
         if trace_len > 0:
@@ -232,6 +368,16 @@ class Log(models.CalculatedModelMixin, models.Model):
             self.time_tracking(logs, level)
 
     def time_tracking(self, logs, level):
+        """
+        Track the time for each log entry.
+
+        Parameters
+        ----------
+        logs : DataFrame
+            The logs DataFrame.
+        level : int
+            The level to track time for.
+        """
         # The time difference is only meaningful if performed on one level, therefore we filter for each level and use those entries only
         same_level_logs = logs[logs['Level'] == level]
         # This is a list containing all indices of the finish entries
@@ -259,4 +405,7 @@ class Log(models.CalculatedModelMixin, models.Model):
 
     @classmethod
     def delete_old_entries(cls):
+        """
+        Delete old log entries from the database.
+        """
         CalculationLog.objects.all().delete()

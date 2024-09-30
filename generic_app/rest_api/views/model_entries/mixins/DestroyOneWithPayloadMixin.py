@@ -9,6 +9,21 @@ class DestroyOneWithPayloadMixin:
     """
 
     def destroy(self, *args, **kwargs):
+        """
+        Destroy the object and return the serialized data of the deleted instance.
+
+        Parameters
+        ----------
+        *args
+            Variable length argument list.
+        **kwargs
+            Arbitrary keyword arguments.
+
+        Returns
+        -------
+        response.Response
+            A response object containing the serialized data of the deleted instance.
+        """
         serializer = self.get_serializer(self.get_object())
         super().destroy(*args, **kwargs)
         return response.Response(serializer.data, status=status.HTTP_200_OK)

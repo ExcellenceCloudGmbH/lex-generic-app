@@ -7,6 +7,23 @@ DELETE_METHOD = 'DELETE'
 
 
 def get_permission_denied_message(access_type, requested_unit, violations):
+    """
+    Generate a permission denied message.
+
+    Parameters
+    ----------
+    access_type : str
+        The type of access that was denied (e.g., 'read', 'modify').
+    requested_unit : str
+        The unit that was requested (e.g., 'model', 'instance').
+    violations : list
+        A list of violations that caused the denial.
+
+    Returns
+    -------
+    str
+        A formatted permission denied message.
+    """
     details = ''
     if violations:
         details = f' Violations: {", ".join(violations)}'
@@ -15,11 +32,15 @@ def get_permission_denied_message(access_type, requested_unit, violations):
 
 class UserPermission(BasePermission):
     """
-    This permission class ensures, that only certain users can perform specific operations on the data.
-    Important hint: one might think that through the error messages, information is revealed to an unauthorized
-    user such as the existence of a certain model. But: the error message can only be seen by someone that
-    is authenticated and in one of the authorized groups("azure_groups"). Therefore, providing there error messages
-    is ok, and might be very helpful for some user unsuccessfully trying to perform certain operations.
+    Permission class to ensure that only certain users can perform specific operations on the data.
+
+    This class checks user permissions for different HTTP methods (GET, POST, PUT, PATCH, DELETE)
+    and provides detailed error messages for unauthorized access attempts.
+
+    Attributes
+    ----------
+    message : str
+        The message to be returned when permission is denied.
     """
 
     message = None
@@ -27,6 +48,21 @@ class UserPermission(BasePermission):
     # TODO: this class can easily extended to also consider permissions set via Django admin
 
     def has_permission(self, request, view):
+        """
+        Check if the user has permission to perform the requested action.
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object.
+        view : View
+            The view object.
+
+        Returns
+        -------
+        bool
+            True if the user has permission, False otherwise.
+        """
         model_container = view.kwargs['model_container']
         user = request.user
         modification_restriction = model_container.get_modification_restriction()
@@ -62,6 +98,23 @@ class UserPermission(BasePermission):
         raise ValueError(f'unknow http method {request.method}')
 
     def has_object_permission(self, request, view, obj):
+        """
+        Check if the user has permission to perform the requested action on a specific object.
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object.
+        view : View
+            The view object.
+        obj : Model
+            The object to check permissions against.
+
+        Returns
+        -------
+        bool
+            True if the user has permission, False otherwise.
+        """
         model_container = view.kwargs['model_container']
         user = request.user
         modification_restriction = model_container.get_modification_restriction()

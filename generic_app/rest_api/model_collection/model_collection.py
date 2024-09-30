@@ -13,18 +13,73 @@ one_to_one_name = 'OneToOneField'
 
 
 def get_relation_fields(model):
+    """
+    Get the relation fields of a given model.
+
+    Parameters
+    ----------
+    model : Model
+        The Django model to inspect.
+
+    Returns
+    -------
+    list
+        A list of relation fields in the model.
+    """
     relation_field_types = {foreign_key_name, one_to_one_name, many_to_many_name}
     return [field for field in model._meta.get_fields() if
             field.get_internal_type() in relation_field_types and not field.one_to_many]
 
 
 def title_for_model(model):
+    """
+    Get the title for a given model.
+
+    Parameters
+    ----------
+    model : Model
+        The Django model to get the title for.
+
+    Returns
+    -------
+    str
+        The title of the model.
+    """
     # TODO: add new way of defining custom readable name: e.g. via custom "meta"-class like "class CustomDefinitions"
     #   containing an attribute "readable_name"
     return model._meta.verbose_name.title()
 
 
 class ModelContainer:
+    """
+    Container for a Django model with additional metadata and functionality.
+
+    Parameters
+    ----------
+    model_class : type
+        The Django model class.
+    process_admin : object
+        The process admin object associated with the model.
+    models2containers : dict
+        A dictionary mapping models to their containers.
+
+    Attributes
+    ----------
+    model_class : type
+        The Django model class.
+    id : str
+        The ID of the model.
+    title : str
+        The title of the model.
+    process_admin : object
+        The process admin object associated with the model.
+    _models2containers : dict
+        A dictionary mapping models to their containers.
+    dependent_model_containers : set
+        A set of dependent model containers.
+    obj_serializer : object
+        The serializer for the model objects.
+    """
 
     def __init__(self, model_class, process_admin, models2containers) -> None:
         if hasattr(model_class, '_meta'):
@@ -54,9 +109,30 @@ class ModelContainer:
             self.obj_serializer = None
 
     def get_modification_restriction(self):
+        """
+        Get the modification restriction for the model.
+
+        Returns
+        -------
+        ModelModificationRestriction
+            The modification restriction for the model.
+        """
         return getattr(self.model_class, 'modification_restriction', ModelModificationRestriction())
 
     def get_general_modification_restrictions_for_user(self, user):
+        """
+        Get the general modification restrictions for a user.
+
+        Parameters
+        ----------
+        user : User
+            The user to check restrictions for.
+
+        Returns
+        -------
+        dict
+            A dictionary with general modification restrictions for the user.
+        """
         modification_restriction = self.get_modification_restriction()
         return {
             'can_read_in_general': modification_restriction.can_read_in_general(user, None),
@@ -67,12 +143,23 @@ class ModelContainer:
 
     @property
     def pk_name(self):
+        """
+        Get the primary key name of the model.
+
+        Returns
+        -------
+        str or None
+            The primary key name of the model, or None if not applicable.
+        """
         if hasattr(self.model_class, '_meta'):
             return self.model_class._meta.pk.name
         else:
             return None
 
     def read_dependencies(self):
+        """
+        Read and set up dependencies for the model.
+        """
         if hasattr(self.model_class, '_meta'):
             for field in get_relation_fields(self.model_class):
                 other_model = field.remote_field.model
@@ -84,6 +171,19 @@ class ModelContainer:
 
 
 def create_model_containers(models2admins):
+    """
+    Create model containers from a dictionary of models to admins.
+
+    Parameters
+    ----------
+    models2admins : dict
+        A dictionary mapping models to their admin objects.
+
+    Returns
+    -------
+    tuple
+        A tuple containing two dictionaries: ids to containers and models to containers.
+    """
     ids2containers = dict()
     models2containers = dict()
 
@@ -101,6 +201,21 @@ def create_model_containers(models2admins):
 
 
 def check_model_structure(model_sub_structure, registered_models_set):
+    """
+    Check the structure of the model sub-structure.
+
+    Parameters
+    ----------
+    model_sub_structure : dict
+        The model sub-structure to check.
+    registered_models_set : set
+        A set of registered model names.
+
+    Raises
+    ------
+    ValueError
+        If the structure is invalid.
+    """
     for node, sub_tree in model_sub_structure.items():
         if isinstance(sub_tree, dict):
             check_model_structure(sub_tree, registered_models_set)
@@ -112,6 +227,21 @@ def check_model_structure(model_sub_structure, registered_models_set):
 
 
 def get_readable_name_for(node_name, model_collection):
+    """
+    Get the readable name for a node.
+
+    Parameters
+    ----------
+    node_name : str
+        The name of the node.
+    model_collection : ModelCollection
+        The model collection to get the name from.
+
+    Returns
+    -------
+    str
+        The readable name for the node.
+    """
     if node_name in model_collection.model_styling:
         return model_collection.model_styling[node_name]['name']
     elif node_name in model_collection.all_model_ids:
@@ -124,6 +254,23 @@ READABLE_NAME = 'readable_name'
 TYPE = 'type'
 
 def enrich_model_structure_with_readable_names_and_types(node_name, model_tree, model_collection):
+    """
+    Enrich the model structure with readable names and types.
+
+    Parameters
+    ----------
+    node_name : str
+        The name of the node.
+    model_tree : dict
+        The model tree to enrich.
+    model_collection : ModelCollection
+        The model collection to use for enrichment.
+
+    Returns
+    -------
+    dict
+        The enriched model structure.
+    """
     readable_name = get_readable_name_for(node_name, model_collection)
     if not model_tree:
         type = "Model"
@@ -139,6 +286,35 @@ def enrich_model_structure_with_readable_names_and_types(node_name, model_tree, 
 
 
 class ModelCollection:
+    """
+    Collection of models with additional metadata and functionality.
+
+    Parameters
+    ----------
+    models2admins : dict
+        A dictionary mapping models to their admin objects.
+    model_structure : dict
+        The structure of the models.
+    model_styling : dict
+        The styling information for the models.
+    global_filters : dict
+        The global filters for the models.
+
+    Attributes
+    ----------
+    _ids2containers : dict
+        A dictionary mapping IDs to containers.
+    _models2containers : dict
+        A dictionary mapping models to containers.
+    model_structure : dict
+        The structure of the models.
+    model_styling : dict
+        The styling information for the models.
+    global_filters : dict
+        The global filters for the models.
+    model_structure_with_readable_names : dict
+        The model structure enriched with readable names and types.
+    """
     def __init__(self, models2admins, model_structure, model_styling, global_filters) -> None:
         super().__init__()
 
@@ -163,13 +339,47 @@ class ModelCollection:
 
     @property
     def all_containers(self):
+        """
+        Get all model containers.
+
+        Returns
+        -------
+        dict_values
+            All model containers.
+        """
         return self._ids2containers.values()
 
     @property
     def all_model_ids(self):
+        """
+        Get all model IDs.
+
+        Returns
+        -------
+        set
+            A set of all model IDs.
+        """
         return set([c.id for c in self.all_containers])
 
     def get_container(self, id_or_model_class):
+        """
+        Get the container for a given ID or model class.
+
+        Parameters
+        ----------
+        id_or_model_class : str or type
+            The ID or model class to get the container for.
+
+        Returns
+        -------
+        ModelContainer
+            The container for the given ID or model class.
+
+        Raises
+        ------
+        ValueError
+            If the given item is not a string or a model.
+        """
         if isinstance(id_or_model_class, str):
             return self._ids2containers[id_or_model_class]
         elif issubclass(id_or_model_class, Model):

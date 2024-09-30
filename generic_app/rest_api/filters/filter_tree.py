@@ -1,5 +1,39 @@
 class FilterTreeNode:
+    """
+    A class used to represent a node in a filter tree.
+
+    Attributes
+    ----------
+    node_id : Any
+        The unique identifier for the node.
+    model_container : Any
+        The container holding the model class and primary key name.
+    parent_to_self_fk_name : str
+        The foreign key name from the parent to this node.
+    selection : Any
+        The selection criteria for filtering objects at this node.
+    children : list
+        The child nodes of this node.
+    filtered_objects : dict
+        The queryset of objects filtered at this node.
+    """
     def __init__(self, node_id, model_container, parent_to_self_fk_name, selection, children):
+        """
+        Initializes the FilterTreeNode with the given parameters.
+
+        Parameters
+        ----------
+        node_id : Any
+            The unique identifier for the node.
+        model_container : Any
+            The container holding the model class and primary key name.
+        parent_to_self_fk_name : str
+            The foreign key name from the parent to this node.
+        selection : Any
+            The selection criteria for filtering objects at this node.
+        children : list
+            The child nodes of this node.
+        """
         self.node_id = node_id
         self.model_container = model_container
         self.parent_to_self_fk_name = parent_to_self_fk_name
@@ -11,6 +45,12 @@ class FilterTreeNode:
 
     # Finds all currently filtered objects at this node and writes them into 'self.filtered_objects'
     def evaluate(self):
+        """
+        Evaluates the current node by filtering objects based on the selection criteria
+        and the filtered objects of its children.
+
+        This method updates the 'filtered_objects' attribute with the filtered queryset.
+        """
         # In case the current node has no more children, set 'self.filtered_objects' to
         #  'model.objects.all()'
         if not self.children:
@@ -39,6 +79,14 @@ class FilterTreeNode:
     # Writes for this node an entry of type 'self.node_id -> list(pk) at that id filtered at that node'
     # into the passed dictionary
     def write_self_to_dict(self, d):
+        """
+        Writes the filtered objects' primary keys at this node into the passed dictionary.
+
+        Parameters
+        ----------
+        d : dict
+            The dictionary to which the node's filtered objects' primary keys are written.
+        """
         d[self.node_id] = list(map(
             lambda obj: obj.pk,
             list(set(self.filtered_objects))

@@ -14,6 +14,9 @@ from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
 
 class XLSXField(FileField):
+    """
+    A custom Django FileField for handling XLSX files with additional functionalities.
+    """
     max_length = 300
 
     cell_format = '#,##0.00 ;[Red]-#,##0.00 ;_-* "-"??_-'
@@ -22,6 +25,21 @@ class XLSXField(FileField):
 
 
     def get_number_of_rows_to_insert(self, sheet, index_len):
+        """
+        Calculate the number of rows to insert based on the maximum length of split values in a sheet.
+
+        Parameters
+        ----------
+        sheet : openpyxl.worksheet.worksheet.Worksheet
+            The worksheet to analyze.
+        index_len : int
+            The length of the index.
+
+        Returns
+        -------
+        int
+            The number of rows to insert.
+        """
         max_len = 0
         for column_num in range(index_len + 1, sheet.max_column + 1):
             cell = sheet.cell(row=1, column=column_num)  # Adjust the row number to the row where you want to start splitting
@@ -32,9 +50,31 @@ class XLSXField(FileField):
         return max_len
 
     def insert_rows_before_first_row(self, sheet, num_rows):
+        """
+        Insert a specified number of rows before the first row in a sheet.
+
+        Parameters
+        ----------
+        sheet : openpyxl.worksheet.worksheet.Worksheet
+            The worksheet to modify.
+        num_rows : int
+            The number of rows to insert.
+        """
         sheet.insert_rows(1, amount=num_rows)
 
     def split_entries_in_sheet(self, sheet, number_of_inserted_rows, index_len):
+        """
+        Split entries in a sheet and format the cells.
+
+        Parameters
+        ----------
+        sheet : openpyxl.worksheet.worksheet.Worksheet
+            The worksheet to modify.
+        number_of_inserted_rows : int
+            The number of rows that have been inserted.
+        index_len : int
+            The length of the index.
+        """
         for column_num in range(index_len + 1, sheet.max_column + 1):  # Column F starts at index 6 (1-indexed)
             cell = sheet.cell(row=number_of_inserted_rows+1, column=column_num)  # Adjust the row number to the row where you want to start splitting
             if cell.value:  # Check if the cell is not empty
@@ -52,6 +92,20 @@ class XLSXField(FileField):
                                                    right=Side(border_style='thin'))
 
     def create_pivotable_row(self, sheet, index_len, number_of_rows_to_be_inserted, range_of_pivot_concatenation=None):
+        """
+        Create a pivotable row by concatenating cell values.
+
+        Parameters
+        ----------
+        sheet : openpyxl.worksheet.worksheet.Worksheet
+            The worksheet to modify.
+        index_len : int
+            The length of the index.
+        number_of_rows_to_be_inserted : int
+            The number of rows to be inserted.
+        range_of_pivot_concatenation : list of int, optional
+            The range of rows to concatenate.
+        """
         for column_num in range(index_len + 1, sheet.max_column + 1):
             concatenated_value = ""
             for row_num in range_of_pivot_concatenation:
@@ -62,10 +116,31 @@ class XLSXField(FileField):
 
     def create_excel_file_from_dfs(self, path, data_frames, sheet_names=None, merge_cells=False, formats={}, comments={}, index=True, ranges_of_pivot_concatenation={'default': None}):
         """
-        :param path: file_path including file_name; if relative, will be saved under self.to+path
-        :param data_frames: list of dataframes that will be inserted into an excel tab each
-        :param sheet_names: list of sheet names corresponding to the data_frames
-        :rtype: None
+        Create an Excel file from a list of DataFrames.
+
+        Parameters
+        ----------
+        path : str
+            File path including file name; if relative, will be saved under self.to+path.
+        data_frames : list of pandas.DataFrame
+            List of DataFrames that will be inserted into an Excel tab each.
+        sheet_names : list of str, optional
+            List of sheet names corresponding to the DataFrames.
+        merge_cells : bool, optional
+            Whether to merge cells.
+        formats : dict, optional
+            Dictionary of formats to apply to columns.
+        comments : dict, optional
+            Dictionary of comments to add to columns.
+        index : bool, optional
+            Whether to include the DataFrame index.
+        ranges_of_pivot_concatenation : dict, optional
+            Dictionary specifying ranges of rows to concatenate for each sheet.
+
+        Returns
+        -------
+        BytesIO
+            The created Excel file as a BytesIO object.
         """
         if sheet_names is None:
             sheet_names = ['Sheet']

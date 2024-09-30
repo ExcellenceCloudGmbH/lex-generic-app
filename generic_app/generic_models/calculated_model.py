@@ -8,9 +8,32 @@ from django.db.models.base import ModelBase
 
 from lex_app import settings
 def _flatten(list_2d):
+    """
+    Flatten a 2D list into a 1D list.
+
+    Parameters
+    ----------
+    list_2d : list
+        A 2D list to be flattened.
+
+    Returns
+    -------
+    list
+        A flattened 1D list.
+    """
     return list(itertools.chain.from_iterable(list_2d))
 
 def calc_and_save(models, *args):
+    """
+    Calculate and save models.
+
+    Parameters
+    ----------
+    models : list
+        List of models to be calculated and saved.
+    *args
+        Additional arguments to be passed to the calculate method of each model.
+    """
     for model in models:
         model.calculate(*args)
         try:
@@ -22,7 +45,29 @@ def calc_and_save(models, *args):
 
 
 class CalculatedModelMixinMeta(ModelBase):
+    """
+    Metaclass for CalculatedModelMixin to add unique constraints based on defining fields.
+    """
     def __new__(cls, name, bases, attrs, **kwargs):
+        """
+        Create a new instance of CalculatedModelMixinMeta.
+
+        Parameters
+        ----------
+        name : str
+            Name of the class.
+        bases : tuple
+            Base classes.
+        attrs : dict
+            Class attributes.
+        **kwargs
+            Additional keyword arguments.
+
+        Returns
+        -------
+        CalculatedModelMixinMeta
+            A new instance of CalculatedModelMixinMeta.
+        """
         if 'Meta' not in attrs:
             class Meta:
                 pass
@@ -38,6 +83,18 @@ class CalculatedModelMixinMeta(ModelBase):
 
 
 class CalculatedModelMixin(Model, metaclass=CalculatedModelMixinMeta):
+    """
+    Mixin for calculated models with defining and parallelizable fields.
+
+    Attributes
+    ----------
+    input : bool
+        Indicates if the model is an input model.
+    defining_fields : list
+        List of fields that define the uniqueness of the model.
+    parallelizable_fields : list
+        List of fields that can be parallelized.
+    """
     input = False
     defining_fields = []
     parallelizable_fields = []
@@ -46,14 +103,40 @@ class CalculatedModelMixin(Model, metaclass=CalculatedModelMixinMeta):
         abstract = True
 
     def get_selected_key_list(self, key: str) -> list:
+        """
+        Get a list of selected keys for a given field.
+
+        Parameters
+        ----------
+        key : str
+            The field name.
+
+        Returns
+        -------
+        list
+            List of selected keys.
+        """
         pass
 
     def calculate(self):
+        """
+        Perform the calculation for the model.
+        """
         pass
 
 
     @classmethod
     def create(cls, *args, **kwargs):
+        """
+        Create instances of the model based on defining and parallelizable fields.
+
+        Parameters
+        ----------
+        *args
+            Additional arguments.
+        **kwargs
+            Additional keyword arguments.
+        """
         # define cls as base model
         models = [cls()]
         deleted = False
@@ -132,6 +215,14 @@ class CalculatedModelMixin(Model, metaclass=CalculatedModelMixinMeta):
             calc_and_save(models, *args)
 
     def delete_models_with_same_defining_fields(self):
+        """
+        Delete models with the same defining fields.
+
+        Returns
+        -------
+        CalculatedModelMixin
+            The model instance with the same defining fields.
+        """
         filter_keys = {}
         for k in self.defining_fields:
             filter_keys[k] = getattr(self, k)

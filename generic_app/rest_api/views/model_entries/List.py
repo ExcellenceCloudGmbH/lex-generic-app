@@ -17,15 +17,56 @@ INTERVAL_REQUIRING_FIELDS = {FloatField, IntegerField, DateField, DateTimeField}
 CALCULATION_FIELDS = {IsCalculatedField, CalculateField}
 
 class CustomPageNumberPagination(PageNumberPagination):
+    """
+    Custom pagination class that extends PageNumberPagination to handle a special case where
+    the page size can be set to the total number of objects in the queryset.
+
+    Attributes
+    ----------
+    page_query_param : str
+        The name of the query parameter for the page number.
+    page_size_query_param : str
+        The name of the query parameter for the page size.
+    """
     page_query_param = 'page'
     page_size_query_param = 'perPage'
     def paginate_queryset(self, queryset, request, view=None):
+        """
+        Paginate the queryset based on the request parameters.
+
+        If the 'perPage' query parameter is set to -1, the page size is set to the total number
+        of objects in the queryset.
+
+        Parameters
+        ----------
+        queryset : QuerySet
+            The queryset to paginate.
+        request : HttpRequest
+            The request object containing query parameters.
+        view : View, optional
+            The view that is calling this method.
+
+        Returns
+        -------
+        list
+            A list of paginated objects.
+        """
         if request.query_params["perPage"] == -1:
             self.page_size = queryset.count()  # Set the page size equal to the total number of objects in the queryset
 
         return super().paginate_queryset(queryset, request, view)
 
 class ListModelEntries(ModelEntryProviderMixin, ListAPIView):
+    """
+    API view to list model entries with custom filtering and pagination.
+
+    Attributes
+    ----------
+    pagination_class : class
+        The pagination class to use for this view.
+    filter_backends : list
+        A list of filter backends to use for filtering the queryset.
+    """
     pagination_class = CustomPageNumberPagination
     # see https://stackoverflow.com/a/40585846
     # We use the UserReadRestrictionFilterBackend for filtering out those instances that the user
@@ -33,6 +74,19 @@ class ListModelEntries(ModelEntryProviderMixin, ListAPIView):
     filter_backends = [UserReadRestrictionFilterBackend, DjangoFilterBackend, OrderingFilter]
 
     def get_lookup_expressions(self, field_type):
+        """
+        Get the lookup expressions for a given field type.
+
+        Parameters
+        ----------
+        field_type : type
+            The type of the field.
+
+        Returns
+        -------
+        list
+            A list of lookup expressions for the field type.
+        """
         if field_type in INTERVAL_REQUIRING_FIELDS:
             if field_type in [DateField, DateTimeField]:
                 return ['exact', 'lte', 'gte', 'year', 'month', 'day']
@@ -43,6 +97,22 @@ class ListModelEntries(ModelEntryProviderMixin, ListAPIView):
 
     @property
     def filterset_fields(self):
+        """
+        Generate the filterset fields for the view.
+
+        This method filters out fields that do not have a corresponding django-filter
+        or are not calculation fields.
+
+        Returns
+        -------
+        dict
+            A dictionary of field names and their corresponding lookup expressions.
+
+        Raises
+        ------
+        APIException
+            If the filter fields could not be generated.
+        """
         # we need to only take those fields where a django-filter exists
         try:
             return_fields = {f.name: self.get_lookup_expressions(type(f)) for f in
