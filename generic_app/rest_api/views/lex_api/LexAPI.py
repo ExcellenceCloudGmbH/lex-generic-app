@@ -33,7 +33,7 @@ def get_client_roles():
         'Content-Type': 'application/json'
     }
     data = {
-        'keycloak_client_id': os.getenv('KEYCLOAK_CLIENT_ID')
+        'keycloak_client_id': os.getenv('KEYCLOAK_INTERNAL_CLIENT_ID')
     }
 
     response = requests.get(url, params=data, headers=headers)
