@@ -12,7 +12,7 @@ from asgiref.sync import async_to_sync
 def calculation_ids(sender, instance, created, **kwargs):
     from generic_app.submodels.CalculationIDs import CalculationIDs
 
-    if sender == CalculationIDs:
+    if sender == CalculationIDs and instance.calculation_record != "init_upload":
         channel_layer = get_channel_layer()
 
         calculation_record = instance.calculation_record
