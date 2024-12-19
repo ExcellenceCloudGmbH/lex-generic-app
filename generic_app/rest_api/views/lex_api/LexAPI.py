@@ -2,6 +2,8 @@ import os
 import requests
 
 def send_email(subject, emails, body):
+    if not os.getenv("DEPLOYMENT_ENVIRONMENT"):
+        return
     url = f"https://{os.getenv('DOMAIN_BASE')}/api/send_email/"
     headers = {
         'Authorization': f"Api-Key {os.getenv('LEX_API_KEY')}",

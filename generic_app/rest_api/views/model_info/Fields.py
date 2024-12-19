@@ -32,7 +32,6 @@ DJANGO_FIELD2TYPE_NAME = {
 
 DEFAULT_TYPE_NAME = 'string'
 
-
 def create_field_info(field):
     default_value = None
     if field.get_default() is not None:
@@ -43,6 +42,9 @@ def create_field_info(field):
     additional_info = {}
     if field_type == ForeignKey:
         additional_info['target'] = field.target_field.model._meta.model_name
+        # Get limit_choices_to information
+        limit_choices_to = field.remote_field.limit_choices_to
+        additional_info['limit_choices_to'] = limit_choices_to
 
     return {
         'name': field.name,
