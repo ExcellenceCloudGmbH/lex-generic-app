@@ -14,6 +14,7 @@ from generic_app.rest_api.views.file_operations.ModelExport import ModelExportVi
 from generic_app.rest_api.views.sharepoint.SharePointFileDownload import SharePointFileDownload
 from generic_app.rest_api.views.sharepoint.SharePointPreview import SharePointPreview
 from generic_app.rest_api.views.sharepoint.SharePointShareLink import SharePointShareLink
+from generic_app.rest_api.views.sharepoint.DeleteUnusedFiles import DeleteUnusedFiles
 from generic_app.rest_api.signals import do_post_save
 
 from generic_app.rest_api.views.model_info.Fields import Fields
@@ -169,6 +170,8 @@ class ProcessAdminSite:
                  name='sharepoint-file-share-link'),
             path('api/<model:model_container>/sharepoint-file-preview-link', SharePointPreview.as_view(),
                  name='sharepoint-file-preview-link'),
+            path('api/delete-unused-files', DeleteUnusedFiles.as_view(),
+                 name='delete-unused-files'),
         ]
 
         return urlpatterns + url_patterns_for_react_admin + url_patterns_for_model_info + url_patterns_for_sharepoint

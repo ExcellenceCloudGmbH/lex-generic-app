@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="generic_app",
-    version="1.0.2",
+    version="1.0.3",
     author="Melih Sünbül",
     author_email="m.sunbul@lund-it.com",
     description="A Python / Django library to create business applications easily with complex logic",
