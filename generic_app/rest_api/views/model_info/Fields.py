@@ -1,5 +1,5 @@
 from django.db.models import ForeignKey, IntegerField, FloatField, BooleanField, DateField, DateTimeField, FileField, \
-    ImageField, AutoField, JSONField
+    ImageField, AutoField, JSONField, ManyToManyField
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -27,7 +27,8 @@ DJANGO_FIELD2TYPE_NAME = {
     ImageField: 'image_file',
     CalculateField: 'calculate',
     IsCalculatedField: 'is_calculated',
-    JSONField: 'json'
+    JSONField: 'json',
+    ManyToManyField: 'many_to_many',
 }
 
 DEFAULT_TYPE_NAME = 'string'
@@ -40,7 +41,7 @@ def create_field_info(field):
     field_type = type(field)
 
     additional_info = {}
-    if field_type == ForeignKey:
+    if field_type == ForeignKey or field_type == ManyToManyField:
         additional_info['target'] = field.target_field.model._meta.model_name
         # Get limit_choices_to information
         limit_choices_to = field.remote_field.limit_choices_to
@@ -64,7 +65,7 @@ class Fields(APIView):
 
     def get(self, *args, **kwargs):
         model = kwargs['model_container'].model_class
-        fields = model._meta.fields
+        fields = list(model._meta.fields) + list(model._meta.many_to_many)
         field_info = {'fields': [
             create_field_info(field) for field in fields
         ], 'id_field': model._meta.pk.name}
