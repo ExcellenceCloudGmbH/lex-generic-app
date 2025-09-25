@@ -9,4 +9,6 @@ def get_user_name(request):
 def get_user_email(request):
     if "JIRA" in request.headers:
         return "jira@mail.com"
+    elif "api-key" in [header.lower() for header in list(request.headers)]:
+        return "technical@user.com"
     return request.auth['email']
