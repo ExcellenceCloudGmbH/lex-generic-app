@@ -1,32 +1,57 @@
 import os
 import requests
+import base64
+import mimetypes
 
-def send_email(subject, emails, body):
+def build_attachments_from_paths(paths):
+    """
+    Convert local file paths into the JSON format expected by /api/send_email/.
+
+    Returns:
+      [
+        {"name": "file.pdf", "content_base64": "...", "content_type": "application/pdf"},
+        ...
+      ]
+    """
+    out = []
+    for p in paths:
+        guessed_type, _ = mimetypes.guess_type(p)
+        content_type = guessed_type or "application/octet-stream"
+        with open(p, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("ascii")
+        out.append(
+            {"name": os.path.basename(p), "content_base64": b64, "content_type": content_type}
+        )
+    return out
+
+def send_email(subject, emails, body, attachments=None):
+    """
+    attachments (optional):
+      - already prepared list of dicts (see formats above), OR
+      - list of file paths -> pass build_attachments_from_paths(paths)
+    """
     if not os.getenv("DEPLOYMENT_ENVIRONMENT"):
         return
+
     url = f"https://{os.getenv('DOMAIN_BASE')}/api/send_email/"
     headers = {
-        'Authorization': f"Api-Key {os.getenv('LEX_API_KEY')}",
-        'Content-Type': 'application/json'
+        "Authorization": f"Api-Key {os.getenv('LEX_API_KEY')}",
+        "Content-Type": "application/json",
     }
 
-    # Data to be sent in the POST request
-    data = {
-        'subject': subject,
-        'emails': emails,
-        'body': body
-    }
+    data = {"subject": subject, "emails": emails, "body": body}
 
-    # Making the POST request
-    response = requests.post(url, json=data, headers=headers)
+    if attachments:
+        data["attachments"] = attachments
 
-    # Check the status code of the response
+    response = requests.post(url, json=data, headers=headers, timeout=20)
+
     if response.status_code == 200:
         return response.json()
-    else:
-        print('Failed with status code:', response.status_code)
-        print('Response:', response.text)
-        raise Exception("Failed to send email")
+
+    print("Failed with status code:", response.status_code)
+    print("Response:", response.text)
+    raise Exception("Failed to send email")
 
 def get_client_roles():
     url = f"https://{os.getenv('DOMAIN_BASE')}/api/get_client_roles/"
